@@ -1,40 +1,48 @@
 package riscv;
 
 public class Instruction {
-    private final InstructionType type;
-    private final int func;
-    private final int opcode;
-    private final String name;
+    public static final long UNDEFINED_VALUE = Long.MAX_VALUE;
 
-    public Instruction(InstructionType type, int func, int opcode, String name) {
-        this.type = type;
-        this.func = func;
-        this.opcode = opcode;
-        this.name = name;
+    private final ProtoInstruction proto;
+    private final long r1;
+    private final long r2;
+    private final long rd;
+    private final long imm;
+
+    public Instruction(ProtoInstruction proto, long r1, long r2, long rd, long imm) {
+        this.proto = proto;
+        this.r1 = r1;
+        this.r2 = r2;
+        this.rd = rd;
+        this.imm = imm;
     }
 
-    // constructor without func parameter, for U and J types
-    public Instruction(InstructionType type, int opcode, String name) {
-        assert type == InstructionType.U || type == InstructionType.J;
-        this.type = type;
-        this.func = -1;
-        this.opcode = opcode;
-        this.name = name;
+    @Override
+    public String toString() {
+        return String.format("%s %d, %d, %d, %d", proto.getName(), rd, r1, r2, imm);
     }
 
-    private static int getInstructionLength(int word16) {
-        if ((word16 & 0b11) != 0b11) {
-            return 16;
-        }
-        if ((word16 & 0b11100) != 0b11100) {
-            return 32;
-        }
-        if (((word16 >> 5) & 0b1) == 0) {
-            return 48;
-        }
-        if (((word16 >> 6) & 0b1) == 0) {
-            return 64;
-        }
-        throw new UnsupportedOperationException("Unimplemented instruction length");
+    public long getR1() {
+        return r1;
+    }
+
+    public long getR2() {
+        return r2;
+    }
+
+    public long getRd() {
+        return rd;
+    }
+
+    public long getImm() {
+        return imm;
+    }
+
+    public InstructionType getType() {
+        return proto.getType();
+    }
+
+    public String getName() {
+        return proto.getName();
     }
 }

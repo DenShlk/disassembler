@@ -1,9 +1,13 @@
 import elf.*;
+import riscv.Instruction;
+import riscv.InstructionManager;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
@@ -21,12 +25,23 @@ public class Main {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("File does not contain .text section"));
 
-        SymbolEntry[] symbolEntries = parseSymbolTable(data, sHeaders);
+        List<Instruction> instructions = TextSectionReader.read(data,
+                (int) textSection.sh_offset, (int) textSection.sh_size);
+        System.out.println(".text");
+        for (Instruction instruction : instructions) {
+            System.out.println(instruction == null ? "unknown_instruction" : instruction);
+        }
 
+        /*
+        SymbolEntry[] symbolEntries = parseSymbolTable(data, sHeaders);
+        System.out.println(".symtab");
+        System.out.printf("%s %-15s %7s %-8s %-8s %-8s %6s %s\n",
+                "Symbol", "Value", "Size", "Type", "Bind", "Vis", "Index", "Name");
         for (int i = 0; i < symbolEntries.length; i++) {
             SymbolEntry entry = symbolEntries[i];
             System.out.printf("[%4d] %s\n", i, entry);
         }
+         */
     }
 
     private static SectionHeaderInfo[] getSectionHeaders(byte[] data) {

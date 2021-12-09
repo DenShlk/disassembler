@@ -39,11 +39,11 @@ public abstract class AbstractElfReader<T extends AbstractInfo> {
      * @param minValue inclusive
      * @param maxValue inclusive
      */
-    private static long readWithAssert(byte[] data, int start, int len, long minValue, long maxValue, String message) {
-        assert start + len <= data.length : "Part of block is out of bounds of file";
+    private static long readWithAssert(byte[] data, int offset, int len, long minValue, long maxValue, String message) {
+        assert offset + len <= data.length : "Part of block is out of bounds of file";
         long value = 0;
         for (int i = 0; i < len; i++) {
-            value = value | (Byte.toUnsignedLong(data[start + i]) << (i * 8));
+            value = value | (Byte.toUnsignedLong(data[offset + i]) << (i * 8));
         }
         assert minValue <= value && value <= maxValue : message;
         return value;
