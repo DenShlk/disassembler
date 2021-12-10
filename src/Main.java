@@ -1,50 +1,78 @@
+import IO.OutputAccumulator;
 import elf.*;
 import riscv.Instruction;
-import riscv.InstructionManager;
+import riscv.InstructionPrinter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Main {
 
+    private static final OutputAccumulator out = new OutputAccumulator();
+
     public static void main(String[] args) throws IOException {
+
         if (args.length != 2) {
-            //throw new IllegalArgumentException("Illegal arguments. Must be: <input file path> <output file path>");
+            throw new IllegalArgumentException("Illegal arguments. Must be: <input file path> <output file path>");
         }
 
         byte[] data = readBytes(args[0]);
+        System.out.printf("Read %d bytes from input file", data.length);
 
-        SectionHeaderInfo[] sHeaders = getSectionHeaders(data);
+        SectionHeaderInfo[] sHeaders = decodeSectionHeaders(data);
+        SymbolEntry[] symbolEntries = decodeSymbolTable(data, sHeaders);
+        List<Instruction> instructions = decodeInstructions(data, sHeaders, symbolEntries);
 
-        SectionHeaderInfo textSection = Arrays.stream(sHeaders)
-                .filter(x -> x.sh_type == 0x1) // .text type (program data)
+        printText(instructions);
+        printSymtab(symbolEntries);
+
+        dumpFile(args[1]);
+        System.out.println("Wrote output file");
+    }
+
+    private static void printText(List<Instruction> instructions) {
+        out.println(".text");
+        for (Instruction instruction : instructions) {
+            out.println(InstructionPrinter.print(instruction));
+        }
+    }
+
+    private static List<Instruction> decodeInstructions(byte[] data, SectionHeaderInfo[] sHeaders,
+                                                        SymbolEntry[] symbolEntries) {
+        int textSectionIndex = IntStream.range(0, sHeaders.length)
+                .filter(i -> sHeaders[i].sh_type == 0x1) // .text type (program data)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("File does not contain .text section"));
+        SectionHeaderInfo textSection = sHeaders[textSectionIndex];
 
-        List<Instruction> instructions = TextSectionReader.read(data,
-                (int) textSection.sh_offset, (int) textSection.sh_size);
-        System.out.println(".text");
-        for (Instruction instruction : instructions) {
-            System.out.println(instruction == null ? "unknown_instruction" : instruction);
-        }
+        SymbolEntry[] textLabels = Arrays.stream(symbolEntries)
+                .filter(e -> e.st_shndx == textSectionIndex)
+                .toArray(SymbolEntry[]::new);
+        Arrays.sort(textLabels, Comparator.comparing(l -> l.st_value));
 
-        /*
-        SymbolEntry[] symbolEntries = parseSymbolTable(data, sHeaders);
-        System.out.println(".symtab");
-        System.out.printf("%s %-15s %7s %-8s %-8s %-8s %6s %s\n",
+        List<Instruction> instructions = TextSectionReader.read(data, textLabels,
+                (int) textSection.sh_offset, (int) textSection.sh_size, (int) textSection.sh_addr);
+        return instructions;
+    }
+
+    private static void printSymtab(SymbolEntry[] symbolEntries) {
+        out.println();
+        out.println(".symtab");
+        out.printf("%s %-15s %7s %-8s %-8s %-8s %6s %s\n",
                 "Symbol", "Value", "Size", "Type", "Bind", "Vis", "Index", "Name");
         for (int i = 0; i < symbolEntries.length; i++) {
             SymbolEntry entry = symbolEntries[i];
-            System.out.printf("[%4d] %s\n", i, entry);
+            out.printf("[%4d] %s\n", i, entry);
         }
-         */
     }
 
-    private static SectionHeaderInfo[] getSectionHeaders(byte[] data) {
+    private static SectionHeaderInfo[] decodeSectionHeaders(byte[] data) {
         ElfHeaderReader ehReader = new ElfHeaderReader();
         ehReader.testBlocks();
         ElfHeaderInfo eHeader = ehReader.readBlocks(data, 0);
@@ -70,7 +98,7 @@ public class Main {
         return sHeaders;
     }
 
-    private static SymbolEntry[] parseSymbolTable(byte[] data, SectionHeaderInfo[] sectionHeaders) {
+    private static SymbolEntry[] decodeSymbolTable(byte[] data, SectionHeaderInfo[] sectionHeaders) {
         SectionHeaderInfo symtabSection = Arrays.stream(sectionHeaders)
                 .filter(x -> x.sh_type == 0x2) // .symtab type (symbol table)
                 .findFirst()
@@ -105,6 +133,14 @@ public class Main {
             throw new FileNotFoundException("File not found." + System.lineSeparator() + e.getMessage());
         } catch (IOException e) {
             throw new IOException("Failed to read file:" + System.lineSeparator() + e.getMessage());
+        }
+    }
+
+    private static void dumpFile(String path) throws IOException {
+        try {
+            Files.writeString(Path.of(path), out.dump());
+        } catch (IOException e) {
+            throw new IOException("Failed writing result to file:" + System.lineSeparator() + e.getMessage());
         }
     }
 }

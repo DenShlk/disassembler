@@ -8,8 +8,11 @@ public class Instruction {
     private final long r2;
     private final long rd;
     private final long imm;
+    private long address;
+    private String label;
 
-    public Instruction(ProtoInstruction proto, long r1, long r2, long rd, long imm) {
+
+    public Instruction(ProtoInstruction proto, long rd, long r1, long r2, long imm) {
         this.proto = proto;
         this.r1 = r1;
         this.r2 = r2;
@@ -44,5 +47,21 @@ public class Instruction {
 
     public String getName() {
         return proto.getName();
+    }
+
+    public long getAddress() {
+        return address;
+    }
+
+    public void setAddress(long address) {
+        this.address = address;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

@@ -2,7 +2,7 @@ package riscv;
 
 import java.util.*;
 
-public class InstructionManager {
+public class InstructionDecoder {
     // opcode -> instruction
     private final Map<Integer, List<ProtoInstruction>> opcode2Instruction = new HashMap<>();
     // only for opcodes relevant to instructions of only one type
@@ -13,7 +13,7 @@ public class InstructionManager {
     private final ProtoInstruction ecallProto;
     private final ProtoInstruction ebreakProto;
 
-    public InstructionManager() {
+    public InstructionDecoder() {
         List<Integer> ambiguousType = new ArrayList<>();
         for (ProtoInstruction proto : ProtoInstructionList.PROTOS) {
             int opcode = proto.getOpcode();
@@ -41,7 +41,7 @@ public class InstructionManager {
                 .orElseThrow(AssertionError::new);
     }
 
-    public Instruction disassemble(long bits) {
+    public Instruction decode(long bits) {
         ProtoInstruction proto = searchProto(bits);
         if (proto == null) {
             return null;

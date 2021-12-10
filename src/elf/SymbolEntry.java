@@ -10,7 +10,7 @@ public class SymbolEntry extends AbstractInfo {
     public long st_value;
     public long st_size;
 
-    public String name = null;
+    private String name = null;
 
     public String getName() {
         assert name != null : "Name is not initialized";

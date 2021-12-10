@@ -98,6 +98,8 @@ public abstract class AbstractElfReader<T extends AbstractInfo> {
             }
         }
 
-        System.err.println(ok ? "Blocks array initialized correctly" : "Errors found!");
+        if (!ok) {
+            System.err.println("Errors in blocks configuration found!");
+        }
     }
 }
