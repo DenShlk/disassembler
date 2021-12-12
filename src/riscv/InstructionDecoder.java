@@ -151,9 +151,6 @@ public class InstructionDecoder {
                 result = proto;
             }
         }
-        if (result == null) {
-            return null;
-        }
         return result;
     }
 
@@ -178,10 +175,10 @@ public class InstructionDecoder {
         if ((word16 & 0b11100) != 0b11100) {
             return 32;
         }
-        if ((word16 & (1 << 6)) == 0) {
+        if ((word16 & (1 << 5)) == 0) {
             return 48;
         }
-        if ((word16 & (1 << 7)) == 0) {
+        if ((word16 & (1 << 6)) == 0) {
             return 64;
         }
         throw new UnsupportedOperationException("Unimplemented instruction length");

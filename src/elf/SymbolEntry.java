@@ -24,8 +24,8 @@ public class SymbolEntry extends AbstractInfo {
 
     @Override
     public String toString() {
-        return String.format("0x%-15X %5d %-8s %-8s %-8s %6s %s",
-                st_value, st_size, getType(), getBind(), getVisibility(), getIndexString(), name);
+        return String.format("[%4d] 0x%-15X %5d %-8s %-8s %-8s %6s %s",
+                st_name, st_value, st_size, getType(), getBind(), getVisibility(), getIndexString(), name);
     }
 
     private static final Map<Integer, EntryVisibility> number2Visibility = Map.of(

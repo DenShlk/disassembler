@@ -17,6 +17,18 @@ public class RegisterNamingConverter {
             new Range(18, 27), new NamingRange("s", 2, 11),
             new Range(28, 31), new NamingRange("t", 3, 6));
 
+    private static final Map<Integer, String> csrRegister2name = Map.of(
+            0x001, "fflags",
+            0x002, "frm",
+            0x003, "fcsr",
+            0xC00, "cycle",
+            0xC01, "time",
+            0xC02, "instret",
+            0xC80, "cycleh",
+            0xC81, "timeh",
+            0xC82, "instreth"
+    );
+
     private static final Map<Long, String> register2name = new HashMap<>();
 
     static {
@@ -30,8 +42,13 @@ public class RegisterNamingConverter {
     }
 
     public static String toAbi(long reg) {
-        assert register2name.containsKey(reg);
+        assert register2name.containsKey(reg) : reg;
         return register2name.get(reg);
+    }
+
+    public static String CSRtoAbi(long reg) {
+        assert csrRegister2name.containsKey((int) reg) : reg;
+        return csrRegister2name.get((int) reg);
     }
 
     private static class Range {

@@ -1,4 +1,4 @@
-import IO.OutputAccumulator;
+import io.OutputAccumulator;
 import elf.*;
 import riscv.Instruction;
 import riscv.InstructionPrinter;
@@ -23,7 +23,7 @@ public class Main {
         }
 
         byte[] data = readBytes(args[0]);
-        System.out.printf("Read %d bytes from input file", data.length);
+        System.out.printf("Read %d bytes from input file\n", data.length);
 
         SectionHeaderInfo[] sHeaders = decodeSectionHeaders(data);
         SymbolEntry[] symbolEntries = decodeSymbolTable(data, sHeaders);
@@ -68,7 +68,7 @@ public class Main {
                 "Symbol", "Value", "Size", "Type", "Bind", "Vis", "Index", "Name");
         for (int i = 0; i < symbolEntries.length; i++) {
             SymbolEntry entry = symbolEntries[i];
-            out.printf("[%4d] %s\n", i, entry);
+            out.println(entry);
         }
     }
 

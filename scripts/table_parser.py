@@ -44,11 +44,11 @@ for line in lines:
         func3 = tokens[3]
     if func3:
         if func7:
-            items.append(f'new ProtoInstruction(InstructionType.{itype}, 0b{func3}, 0b{func7}, 0b{op_code}, "{name}"),')
+            items.append(f'new ProtoInstruction(InstructionType.{itype}, "{name}", 0b{op_code}, 0b{func3}, 0b{func7}),')
         else:
-            items.append(f'new ProtoInstruction(InstructionType.{itype}, 0b{func3}, 0b{op_code}, "{name}"),')
+            items.append(f'new ProtoInstruction(InstructionType.{itype}, "{name}", 0b{op_code}, 0b{func3}),')
     else:
-        items.append(f'new ProtoInstruction(InstructionType.{itype}, 0b{op_code}, "{name}"),')
+        items.append(f'new ProtoInstruction(InstructionType.{itype}, "{name}", 0b{op_code}),')
 
 
 # read java file
