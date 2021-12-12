@@ -84,30 +84,42 @@ public class InstructionDecoder {
 
     public long extractImmediate(InstructionType type, long bits) {
         long imm = 0;
+        // some instructions use imm. less than 32 bits long, and all bits greater than length
+        // are equal to the greatest bit of instruction
+        int stretchFrom = 0;
         switch (type) {
             case R:
                 throw new UnsupportedOperationException("R-type has no immediate");
             case I:
                 imm = bits >> 20;
+                stretchFrom = 11;
                 break;
             case S:
                 imm = ((bits >> 20) << 5) | ((bits >> 7) & 0x1f);
+                stretchFrom = 11;
                 break;
             case B:
                 imm = (((bits >> 31) & 1) << 12);
                 imm |= (((bits >> 7) & 1) << 11);
                 imm |= (((bits >> 25) & 0x3f) << 5);
                 imm |= (((bits >> 8) & 0xf) << 1);
+                stretchFrom = 12;
                 break;
             case U:
                 imm = bits & 0xff_ff_f0_00;
+                stretchFrom = 32;
                 break;
             case J:
                 imm = ((bits >> 31) & 1) << 20; // 20
                 imm |= ((bits >> 21) & 0x3ff) << 1; // 10:1
                 imm |= ((bits >> 20) & 1) << 11; // 11
                 imm |= ((bits >> 12) & 0xff) << 12; // 19:12
+                stretchFrom = 20;
                 break;
+        }
+        if ((imm & (1L << (stretchFrom - 1))) != 0) {
+            // negative value
+            imm |= (-1L) << stretchFrom;
         }
         return imm;
     }
@@ -150,9 +162,6 @@ public class InstructionDecoder {
                 assert result == null;
                 result = proto;
             }
-        }
-        if (result == null) {
-            return null;
         }
         return result;
     }

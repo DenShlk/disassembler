@@ -1,5 +1,5 @@
-import IO.OutputAccumulator;
 import elf.*;
+import io.OutputAccumulator;
 import riscv.Instruction;
 import riscv.InstructionPrinter;
 
@@ -17,6 +17,11 @@ public class Main {
     private static final OutputAccumulator out = new OutputAccumulator();
 
     public static void main(String[] args) throws IOException {
+
+        long x = Integer.MIN_VALUE;
+        System.out.println(Long.toBinaryString(x));
+        System.out.println(Integer.toBinaryString((int)x));
+        System.out.println((int) x);
 
         if (args.length != 2) {
             throw new IllegalArgumentException("Illegal arguments. Must be: <input file path> <output file path>");

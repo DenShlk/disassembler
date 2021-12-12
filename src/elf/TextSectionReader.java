@@ -2,6 +2,7 @@ package elf;
 
 import riscv.Instruction;
 import riscv.InstructionDecoder;
+import riscv.LabelMarker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,6 @@ public class TextSectionReader {
         List<Instruction> result = new ArrayList<>();
 
         int labelInd = 0;
-        int missingLabels = 0;
 
         InstructionDecoder decoder = new InstructionDecoder();
         for (int i = 0; i * 4 < size; i++) {
@@ -22,25 +22,12 @@ public class TextSectionReader {
             Instruction instr = decoder.decode(value);
             instr.setAddress(startAddress + i * 4L);
 
-            while (labelInd < labels.length && labels[labelInd].st_value < instr.getAddress()) {
-                labelInd++;
-            }
-            if (labelInd < labels.length && labels[labelInd].st_value == instr.getAddress()) {
-                String label = labels[labelInd].getName();
-                if (label.isEmpty()) {
-                    label = generateMissingLabel(missingLabels++);
-                }
-                instr.setLabel(label);
-            }
-
             result.add(instr);
         }
 
-        return result;
-    }
+        LabelMarker.mark(result, labels);
 
-    private static String generateMissingLabel(int i) {
-        return String.format("LOC_%05x", i);
+        return result;
     }
 
     private static long readBytes(byte[] data, int offset, int len) {
