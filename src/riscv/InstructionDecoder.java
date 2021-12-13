@@ -91,7 +91,7 @@ public class InstructionDecoder {
                 imm = bits >> 20;
                 break;
             case S:
-                imm = ((bits >> 20) << 5) | ((bits >> 7) & 0x1f);
+                imm = ((bits >> 25) << 5) | ((bits >> 7) & 0x1f);
                 break;
             case B:
                 imm = (((bits >> 31) & 1) << 12);
@@ -123,11 +123,6 @@ public class InstructionDecoder {
             default:
                 throw new UnsupportedOperationException("Unknown register");
         }
-    }
-
-    public String registerToString(long number) {
-        assert number >= 0 && number < 32;
-        return "x" + number;
     }
 
     // returns null if instruction is undefined
@@ -184,7 +179,7 @@ public class InstructionDecoder {
         throw new UnsupportedOperationException("Unimplemented instruction length");
     }
 
-    private enum Register {
+    public enum Register {
         Rd,
         R1,
         R2,

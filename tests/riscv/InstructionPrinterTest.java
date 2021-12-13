@@ -20,7 +20,6 @@ class InstructionPrinterTest {
     @Test
     void print() {
         Random random = new Random(0);
-        // TODO: 13.12.2021 CSR (especially registers)
 
         assertEquals("00000000             ECALL zero, zero, 0",
                 InstructionPrinter.print(new Instruction(new ProtoInstruction(InstructionType.I,
