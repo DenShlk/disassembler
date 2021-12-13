@@ -48,7 +48,7 @@ public class SymbolEntry extends AbstractInfo {
             15, EntryType.HIPROC);
 
     public EntryType getType() {
-        return number2Type.get((int) (st_info >> 4));
+        return number2Type.get((int) (st_info & 0xf));
     }
 
     private static final Map<Integer, EntryBind> number2Bind = Map.of(

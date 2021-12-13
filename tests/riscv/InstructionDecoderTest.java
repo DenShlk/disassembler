@@ -2,27 +2,32 @@ package riscv;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InstructionDecoderTest {
-    // TODO: 13.12.2021
-    private InstructionDecoder decoder = new InstructionDecoder();
+    private final InstructionDecoder decoder = new InstructionDecoder();
 
     @Test
     void decode() {
+        // TODO: 13.12.2021
     }
 
-    private long nextIntMasked(Random random, long mask) {
-        return random.nextInt() & mask;
+    private String toFullBinaryString(int x) {
+        String bits = Integer.toBinaryString(x);
+        bits = "0".repeat(32 - bits.length()) + bits;
+        return bits;
+    }
+
+    private String toFullBinaryString(long x) {
+        String bits = Long.toBinaryString(x);
+        bits = "0".repeat(64 - bits.length()) + bits;
+        return bits;
     }
 
     private int extractBits(int instr, Mapping... maps) {
-        String bits = Integer.toBinaryString(instr);
-        bits = "0".repeat(32 - bits.length()) + bits;
-        bits =  new StringBuilder(bits).reverse().toString();
+        String bits = new StringBuilder(toFullBinaryString(instr)).reverse().toString();
         StringBuilder res = new StringBuilder("0".repeat(32));
         for (Mapping map : maps) {
             if (map.from.lower == map.from.upper) {
@@ -57,6 +62,10 @@ class InstructionDecoderTest {
         }
     }
 
+    /**
+     * @link https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf
+     * page 12, figure 2.4
+     */
     @Test
     void extractImmediate() {
         Random random = new Random(0);
@@ -85,28 +94,18 @@ class InstructionDecoderTest {
                     new Mapping(new Range(11, 8), new Range(4, 1))
             ), decoder.extractImmediate(InstructionType.B, instr));
 
+            assertEquals(extractBits(instr,
+                    new Mapping(new Range(31), new Range(31)),
+                    new Mapping(new Range(30, 12), new Range(30, 12))
+            ), decoder.extractImmediate(InstructionType.U, instr));
 
-            // not convenient way of testing, but statements are true
-            long imm11_0 = random.nextInt(1 << 12);
-            assertEquals(imm11_0, decoder.extractImmediate(InstructionType.I, random.nextInt(1 << 20) + (imm11_0 << 20)));
-
-            long imm_4_0 = random.nextInt(1 << 5);
-            long imm_11_5 = random.nextInt(1 << 7);
-            assertEquals((imm_11_5 << 5) + imm_4_0, decoder.extractImmediate(InstructionType.S,
-                    (imm_11_5 << 25) + (imm_4_0 << 7) +
-                            nextIntMasked(random, 0b0000000_11111_11111_111_00000_1111111)));
-
-            long imm_12 = random.nextInt(2);
-            long imm_10_5 = random.nextInt(1 << 6);
-            long imm_4_1 = random.nextInt(1 << 4);
-            long imm_11 = random.nextInt(2);
-            assertEquals((imm_12 << 12) + (imm_10_5 << 5) + (imm_4_1 << 1) + (imm_11 << 11),
-                    decoder.extractImmediate(InstructionType.B,
-                    (imm_12 << 31) + (imm_10_5 << 25) + (imm_4_1 << 8) + (imm_11 << 7) +
-                    nextIntMasked(random, 0b0000000_11111_11111_111_00000_1111111)));
-
-            long imm_31_12 = nextIntMasked(random, ~0b11111_1111111);
-            // TODO: 13.12.2021 all types
+            assertEquals(extractBits(instr,
+                    new Mapping(new Range(31), new Range(31, 20)),
+                    new Mapping(new Range(19, 12), new Range(19, 12)),
+                    new Mapping(new Range(20), new Range(11)),
+                    new Mapping(new Range(30, 25), new Range(10, 5)),
+                    new Mapping(new Range(24, 21), new Range(4, 1))
+            ), decoder.extractImmediate(InstructionType.J, instr));
         }
     }
 
@@ -126,8 +125,62 @@ class InstructionDecoderTest {
         }
     }
 
+    private long randomFillBits(Random random, long bits, Range... ranges) {
+        for (Range range : ranges) {
+            for (int i = range.lower; i <= range.upper; i++) {
+                bits = bits ^ ((long) random.nextInt(2) << i);
+            }
+        }
+        return bits;
+    }
+
+    @Test
+    void randomFillBitsTest() {
+        Random random = new Random(0);
+        for (int i = 0; i < 100; i++) {
+            long x = random.nextLong();
+            String bits = toFullBinaryString(x);
+            int from = random.nextInt(64);
+            int len = random.nextInt(64 - from + 1);
+            assertEquals(bits.substring(from, from + len),
+                    toFullBinaryString(randomFillBits(random, x, new Range(from, from + len - 1)))
+                            .substring(from, from + len));
+        }
+    }
+
     @Test
     void searchProto() {
+        Random random = new Random(0);
+        for (ProtoInstruction proto : ProtoInstructionList.PROTOS) {
+            if (proto.getName().equals("ECALL") || proto.getName().equals("EBREAK")) {
+                continue;
+            }
+
+            for (int i = 0; i < 1; i++) {
+                long instr = proto.getOpcode();
+                if (proto.getFunc3() != ProtoInstruction.UNDEFINED_FUNC) {
+                    instr |= proto.getFunc3() << 12;
+                } else {
+                    instr = randomFillBits(random, instr, new Range(14, 12));
+                }
+                if (proto.getFunc7() != ProtoInstruction.UNDEFINED_FUNC) {
+                    instr |= proto.getFunc7() << 25;
+                } else {
+                    instr = randomFillBits(random, instr, new Range(31, 25));
+                }
+
+                instr = randomFillBits(random, instr,
+                        new Range(24, 20),
+                        new Range(19, 15),
+                        new Range(11, 7));
+                assertEquals(proto, decoder.searchProto(instr));
+            }
+        }
+
+        long ecall = 0b1110011;
+        long ebreak = ecall + (1 << 20);
+        assertEquals("ECALL", decoder.searchProto(ecall).getName());
+        assertEquals("EBREAK", decoder.searchProto(ebreak).getName());
     }
 
     @Test

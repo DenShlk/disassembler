@@ -52,9 +52,8 @@ public class Main {
         SectionHeaderInfo textSection = sHeaders[textSectionIndex];
 
         SymbolEntry[] textLabels = Arrays.stream(symbolEntries)
-                .filter(e -> e.st_shndx == textSectionIndex)
+                //.filter(e -> e.st_shndx == textSectionIndex)
                 .toArray(SymbolEntry[]::new);
-        Arrays.sort(textLabels, Comparator.comparing(l -> l.st_value));
 
         List<Instruction> instructions = TextSectionReader.read(data, textLabels,
                 (int) textSection.sh_offset, (int) textSection.sh_size, (int) textSection.sh_addr);
@@ -105,7 +104,7 @@ public class Main {
                 .orElseThrow(() -> new IllegalArgumentException("File does not contain .symtab section"));
 
         SectionHeaderInfo strtabSection = Arrays.stream(sectionHeaders)
-                .filter(x -> x.sh_type == 0x3) // .symtab type (symbol table)
+                .filter(x -> x.sh_type == 0x3) // .strtab type (string table)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("File does not contain .strtab section"));
 

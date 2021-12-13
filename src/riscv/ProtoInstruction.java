@@ -48,4 +48,15 @@ public class ProtoInstruction {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "ProtoInstruction{" +
+                "type=" + type +
+                ", func3=" + (func3 == UNDEFINED_FUNC ? "UNDEF" : func3) +
+                ", func7=" + (func7 == UNDEFINED_FUNC ? "UNDEF" : func7) +
+                ", opcode=" + opcode +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

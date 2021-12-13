@@ -1,213 +1,213 @@
 .text
-00010076             ADDI a5, zero, 0
-0001007e             ADDI a0, a0, 894
-00010086             AUIPC gp, 8192
-0001008a             ADDI gp, gp, 3132
-0001008e             ADDI a0, gp, 3124
-00010092             ADDI a2, gp, 3152
-0001009c             AUIPC a0, 0
-000100a0             ADDI a0, a0, 792
-000100a6             AUIPC a0, 0
-000100aa             ADDI a0, a0, 730
-000100c0             LBU a5, gp, 3124
-000100c8             ADDI a5, zero, 0
-000100d0             ADDI a0, a0, 1104
-000100d4             AUIPC ra, 0
-000100d8             JALR ra, zero, 0
-000100de             SB gp, a5, 99828
-000100ea             ADDI a5, zero, 0
-000100f2             ADDI a1, gp, 3128
-000100f6             ADDI a0, a0, 1104
-000100fa             AUIPC t1, 0
-000100fe             JALR zero, zero, 0
-00010106             ADDI sp, sp, 4048
-0001010a             SW sp, s0, 1292
-0001010e             ADDI s0, sp, 48
-00010112             SW s0, a0, 129372
-00010116             SW s0, a1, 129400
-0001011a             LW a4, s0, 4060
-0001011e             LW a5, s0, 4056
-00010122             ADD a5, a4, a5
-00010126             SW s0, a5, 130540
-0001012a             LW a5, s0, 4076
-0001012e             ADDI a0, a5, 0
-00010132             LW s0, sp, 44
-00010136             ADDI sp, sp, 48
-0001013a             JALR zero, ra, 0
-0001013e             ADDI sp, sp, 4064
-00010142             SW sp, ra, 60
-00010146             SW sp, s0, 280
-0001014a             ADDI s0, sp, 32
-0001014e             ADDI a5, zero, 3
-00010152             SW s0, a5, 130540
-00010156             ADDI a5, zero, 5
-0001015a             SW s0, a5, 130536
-0001015e             LW a4, s0, 4076
-00010162             LW a5, s0, 4072
-00010166             ADD a5, a4, a5
-0001016a             SW s0, a5, 130532
-0001016e             LW a1, s0, 4068
-00010172             LW a0, s0, 4072
-00010176             JAL ra, 2097040
-0001017a             SW s0, a0, 130380
-0001017e             ADDI a5, zero, 0
-00010182             ADDI a0, a5, 0
-00010186             LW ra, sp, 28
-0001018a             LW s0, sp, 24
-0001018e             ADDI sp, sp, 32
-00010192             JALR zero, ra, 0
-000101a2             LW a0, gp, 3112
-000101ba             ADDI a5, s0, 1204
-000101be             ADDI s2, s2, 1204
-000101c2             ADD s2, s2, a5
-000101ca             SRLI s2, s2, sp
-000101ce             BEQ s2, zero, 22
-000101d2             ADDI s0, s0, 1204
-000101e0             BNE s2, s1, 8184
-000101e8             ADDI a5, s0, 1204
-000101ec             ADDI s2, s2, 1212
-000101f0             ADD s2, s2, a5
-000101f4             SRLI s2, s2, sp
-000101f8             BEQ s2, zero, 22
-000101fc             ADDI s0, s0, 1204
-0001020a             BNE s2, s1, 8184
-0001021e             BGEU t1, a2, 38
-00010222             ANDI a5, a4, 15
-0001022a             ANDI a3, a2, 4080
-0001023c             BLTU a4, a3, 8182
-00010244             ADD a3, t1, a2
-0001024a             AUIPC t0, 0
-00010250             JALR zero, a3, 10
-00010254             SB a4, a1, 366
-00010258             SB a4, a1, 365
-0001025c             SB a4, a1, 364
-00010260             SB a4, a1, 363
-00010264             SB a4, a1, 362
-00010268             SB a4, a1, 361
-0001026c             SB a4, a1, 360
-00010270             SB a4, a1, 359
-00010274             SB a4, a1, 358
-00010278             SB a4, a1, 357
-0001027c             SB a4, a1, 356
-00010280             SB a4, a1, 355
-00010284             SB a4, a1, 354
-00010288             SB a4, a1, 353
-0001028c             SB a4, a1, 352
-00010292             ANDI a1, a1, 255
-00010296             SLLI a3, a1, s0
-0001029c             SLLI a3, a1, a6
-000102a4             SLLI a3, a5, sp
-000102a8             AUIPC t0, 0
-000102b0             JALR ra, a3, 4008
-000102bc             BGEU t1, a2, 8072
-000102c6             LW s4, gp, 3112
-000102ce             LW s2, s4, 328
-000102e0             BEQ s2, zero, 48
-000102ec             LW s1, s2, 4
-000102f0             ADDI s0, s1, 4095
-000102f4             BLT s0, zero, 28
-000102fc             BEQ s7, zero, 44
-00010300             LW a5, s1, 260
-00010304             BEQ a5, s7, 36
-0001030c             BNE s0, s3, 8176
-00010328             LW a5, s2, 4
-00010330             BEQ a5, s0, 68
-00010334             SW s1, zero, 4
-0001033a             LW a5, s2, 392
-0001033e             SLL a4, s5, s0
-00010342             LW s8, s2, 4
-0001034c             LW a4, s2, 4
-00010350             LW a5, s4, 328
-00010354             BNE a4, s8, 8
-00010358             BEQ a5, s2, 8112
-00010362             LW a5, s2, 396
-00010366             LW a1, s1, 132
-00010374             SW s2, s0, 260
-00010388             ADDI a5, a5, 1212
-0001038c             ADDI s0, s0, 1216
-00010396             SRLI s1, s0, sp
-000103be             LW a4, gp, 3112
-000103c2             LW a5, a4, 328
-000103cc             BLT a6, a4, 90
-000103d0             SLLI a6, a4, sp
-000103d6             ADD t1, a5, a6
-000103da             SW t1, a2, 4488
-000103de             LW a7, a5, 392
-000103e4             SLL a2, a2, a4
-000103e8             OR a7, a7, a2
-000103ec             SW a5, a7, 12840
-000103f0             SW t1, a3, 8616
-000103f6             BEQ a0, a3, 26
-00010406             ADDI a5, a4, 332
-0001040a             SW a4, a5, 10728
-00010410             LW a3, a5, 396
-0001041a             SW a5, a3, 12716
-0001042a             ADDI a7, zero, 93
-0001042e             ECALL zero, zero, 0
-00010432             BLT a0, zero, 6
-00010440             ADD s0, zero, s0
-0001044a             LW a0, gp, 3120
+00010074 register_fini: ADDI a5, zero, 0
+0001007c             ADDI a0, a0, 894
+00010084     _start: AUIPC gp, 8192
+00010088             ADDI gp, gp, -964
+0001008c             ADDI a0, gp, -972
+00010090             ADDI a2, gp, -944
+0001009a             AUIPC a0, 0
+0001009e             ADDI a0, a0, 792
+000100a4             AUIPC a0, 0
+000100a8             ADDI a0, a0, 730
+000100be             LBU a5, gp, -972
+000100c6             ADDI a5, zero, 0
+000100ce             ADDI a0, a0, 1104
+000100d2             AUIPC ra, 0
+000100d6  LOC_00000: JALR ra, zero, 0
+000100dc             SB gp, a5, -972
+000100e8 frame_dummy: ADDI a5, zero, 0
+000100f0             ADDI a1, gp, -968
+000100f4             ADDI a0, a0, 1104
+000100f8             AUIPC t1, 0
+000100fc  LOC_00001: JALR zero, zero, 0
+00010104 _Z8multiplyii: ADDI sp, sp, -48
+00010108             SW sp, s0, 44
+0001010c             ADDI s0, sp, 48
+00010110             SW s0, a0, -36
+00010114             SW s0, a1, -40
+00010118             LW a4, s0, -36
+0001011c             LW a5, s0, -40
+00010120             MUL a5, a4, a5
+00010124             SW s0, a5, -20
+00010128             LW a5, s0, -20
+0001012c             ADDI a0, a5, 0
+00010130             LW s0, sp, 44
+00010134             ADDI sp, sp, 48
+00010138  LOC_00002: JALR zero, ra, 0
+0001013c       main: ADDI sp, sp, -32
+00010140             SW sp, ra, 28
+00010144             SW sp, s0, 24
+00010148             ADDI s0, sp, 32
+0001014c             ADDI a5, zero, 3
+00010150             SW s0, a5, -20
+00010154             ADDI a5, zero, 5
+00010158             SW s0, a5, -24
+0001015c             LW a4, s0, -20
+00010160             LW a5, s0, -24
+00010164             MUL a5, a4, a5
+00010168             SW s0, a5, -28
+0001016c             LW a1, s0, -28
+00010170             LW a0, s0, -24
+00010174             JAL ra, -112
+00010178             SW s0, a0, -20
+0001017c             ADDI a5, zero, 0
+00010180             ADDI a0, a5, 0
+00010184             LW ra, sp, 28
+00010188             LW s0, sp, 24
+0001018c             ADDI sp, sp, 32
+00010190  LOC_00003: JALR zero, ra, 0
+000101a0             LW a0, gp, -984
+000101b8             ADDI a5, s0, 1204
+000101bc             ADDI s2, s2, 1204
+000101c0             SUB s2, s2, a5
+000101c8             SRAI s2, s2, sp
+000101cc             BEQ s2, zero, 22
+000101d0             ADDI s0, s0, 1204
+000101de             BNE s2, s1, -8
+000101e6             ADDI a5, s0, 1204
+000101ea             ADDI s2, s2, 1212
+000101ee             SUB s2, s2, a5
+000101f2             SRAI s2, s2, sp
+000101f6             BEQ s2, zero, 22
+000101fa             ADDI s0, s0, 1204
+00010208             BNE s2, s1, -8
+0001021c             BGEU t1, a2, 38
+00010220             ANDI a5, a4, 15
+00010228             ANDI a3, a2, -16
+0001023a             BLTU a4, a3, -10
+00010242  LOC_00004: SUB a3, t1, a2
+00010248             AUIPC t0, 0
+0001024e             JALR zero, a3, 10
+00010252             SB a4, a1, 14
+00010256  LOC_00005: SB a4, a1, 13
+0001025a             SB a4, a1, 12
+0001025e             SB a4, a1, 11
+00010262             SB a4, a1, 10
+00010266             SB a4, a1, 9
+0001026a             SB a4, a1, 8
+0001026e             SB a4, a1, 7
+00010272             SB a4, a1, 6
+00010276             SB a4, a1, 5
+0001027a             SB a4, a1, 4
+0001027e             SB a4, a1, 3
+00010282             SB a4, a1, 2
+00010286             SB a4, a1, 1
+0001028a             SB a4, a1, 0
+00010290             ANDI a1, a1, 255
+00010294             SLLI a3, a1, s0
+0001029a             SLLI a3, a1, a6
+000102a2             SLLI a3, a5, sp
+000102a6             AUIPC t0, 0
+000102ae             JALR ra, a3, -88
+000102ba             BGEU t1, a2, -120
+000102c4             LW s4, gp, -984
+000102cc             LW s2, s4, 328
+000102de             BEQ s2, zero, 48
+000102ea             LW s1, s2, 4
+000102ee             ADDI s0, s1, -1
+000102f2             BLT s0, zero, 28
+000102fa  LOC_00006: BEQ s7, zero, 44
+000102fe             LW a5, s1, 260
+00010302             BEQ a5, s7, 36
+0001030a             BNE s0, s3, -16
+00010326  LOC_00007: LW a5, s2, 4
+0001032e             BEQ a5, s0, 68
+00010332             SW s1, zero, 4
+00010338             LW a5, s2, 392
+0001033c             SLL a4, s5, s0
+00010340             LW s8, s2, 4
+0001034a             LW a4, s2, 4
+0001034e             LW a5, s4, 328
+00010352             BNE a4, s8, 8
+00010356             BEQ a5, s2, -80
+00010360             LW a5, s2, 396
+00010364             LW a1, s1, 132
+00010372  LOC_00008: SW s2, s0, 4
+00010386             ADDI a5, a5, 1212
+0001038a             ADDI s0, s0, 1216
+00010394             SRAI s1, s0, sp
+000103bc __register_exitproc: LW a4, gp, -984
+000103c0             LW a5, a4, 328
+000103ca             BLT a6, a4, 90
+000103ce             SLLI a6, a4, sp
+000103d4             ADD t1, a5, a6
+000103d8             SW t1, a2, 136
+000103dc             LW a7, a5, 392
+000103e2             SLL a2, a2, a4
+000103e6             OR a7, a7, a2
+000103ea             SW a5, a7, 392
+000103ee             SW t1, a3, 264
+000103f4             BEQ a0, a3, 26
+00010404             ADDI a5, a4, 332
+00010408             SW a4, a5, 328
+0001040e  LOC_00009: LW a3, a5, 396
+00010418             SW a5, a3, 396
+00010428      _exit: ADDI a7, zero, 93
+0001042c             ECALL zero, zero, 0
+00010430             BLT a0, zero, 6
+0001043e             SUB s0, zero, s0
+00010448    __errno: LW a0, gp, -976
 
 .symtab
 Symbol Value              Size Type     Bind     Vis       Index Name
 [   0] 0x0                   0 NOTYPE   LOCAL    DEFAULT   UNDEF 
-[   0] 0x10074               0 NOTYPE   LOCAL    DEFAULT       1 
-[   0] 0x11450               0 NOTYPE   LOCAL    DEFAULT       2 
-[   0] 0x114B4               0 NOTYPE   LOCAL    DEFAULT       3 
-[   0] 0x114BC               0 NOTYPE   LOCAL    DEFAULT       4 
-[   0] 0x114C0               0 NOTYPE   LOCAL    DEFAULT       5 
-[   0] 0x118E8               0 NOTYPE   LOCAL    DEFAULT       6 
-[   0] 0x118F4               0 NOTYPE   LOCAL    DEFAULT       7 
-[   0] 0x0                   0 NOTYPE   LOCAL    DEFAULT       8 
-[   0] 0x0                   0 NOTYPE   LOCAL    DEFAULT       9 
-[   1] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS __call_atexit.c
-[  17] 0x10074              16 NOTYPE   LOCAL    DEFAULT       1 register_fini
-[  31] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS crtstuff.c
-[  42] 0x11450               0 NOTYPE   LOCAL    DEFAULT       2 __EH_FRAME_BEGIN__
-[  61] 0x100BA               0 NOTYPE   LOCAL    DEFAULT       1 __do_global_dtors_aux
-[  83] 0x118F4               1 NOTYPE   LOCAL    DEFAULT       7 completed.1
-[  95] 0x114BC               0 NOTYPE   LOCAL    DEFAULT       4 __do_global_dtors_aux_fini_array_entry
-[ 134] 0x100E8               0 NOTYPE   LOCAL    DEFAULT       1 frame_dummy
-[ 146] 0x118F8              24 NOTYPE   LOCAL    DEFAULT       7 object.0
-[ 155] 0x114B8               0 NOTYPE   LOCAL    DEFAULT       3 __frame_dummy_init_array_entry
-[ 186] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS sample.cpp
-[ 247] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS exit.c
-[ 197] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS impure.c
-[ 206] 0x114C0            1064 NOTYPE   LOCAL    DEFAULT       5 impure_data
-[ 218] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS init.c
-[ 225] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS fini.c
-[ 234] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS atexit.c
-[ 232] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS __atexit.c
-[ 243] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS sys_exit.c
-[ 254] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS errno.c
-[  31] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS crtstuff.c
-[ 262] 0x114B0               0 NOTYPE   LOCAL    DEFAULT       2 __FRAME_END__
-[   0] 0x0                   0 NOTYPE   LOCAL    DEFAULT     ABS 
+[   0] 0x10074               0 SECTION  LOCAL    DEFAULT       1 
+[   0] 0x11450               0 SECTION  LOCAL    DEFAULT       2 
+[   0] 0x114B4               0 SECTION  LOCAL    DEFAULT       3 
+[   0] 0x114BC               0 SECTION  LOCAL    DEFAULT       4 
+[   0] 0x114C0               0 SECTION  LOCAL    DEFAULT       5 
+[   0] 0x118E8               0 SECTION  LOCAL    DEFAULT       6 
+[   0] 0x118F4               0 SECTION  LOCAL    DEFAULT       7 
+[   0] 0x0                   0 SECTION  LOCAL    DEFAULT       8 
+[   0] 0x0                   0 SECTION  LOCAL    DEFAULT       9 
+[   1] 0x0                   0 FILE     LOCAL    DEFAULT     ABS __call_atexit.c
+[  17] 0x10074              16 FUNC     LOCAL    DEFAULT       1 register_fini
+[  31] 0x0                   0 FILE     LOCAL    DEFAULT     ABS crtstuff.c
+[  42] 0x11450               0 OBJECT   LOCAL    DEFAULT       2 __EH_FRAME_BEGIN__
+[  61] 0x100BA               0 FUNC     LOCAL    DEFAULT       1 __do_global_dtors_aux
+[  83] 0x118F4               1 OBJECT   LOCAL    DEFAULT       7 completed.1
+[  95] 0x114BC               0 OBJECT   LOCAL    DEFAULT       4 __do_global_dtors_aux_fini_array_entry
+[ 134] 0x100E8               0 FUNC     LOCAL    DEFAULT       1 frame_dummy
+[ 146] 0x118F8              24 OBJECT   LOCAL    DEFAULT       7 object.0
+[ 155] 0x114B8               0 OBJECT   LOCAL    DEFAULT       3 __frame_dummy_init_array_entry
+[ 186] 0x0                   0 FILE     LOCAL    DEFAULT     ABS sample.cpp
+[ 247] 0x0                   0 FILE     LOCAL    DEFAULT     ABS exit.c
+[ 197] 0x0                   0 FILE     LOCAL    DEFAULT     ABS impure.c
+[ 206] 0x114C0            1064 OBJECT   LOCAL    DEFAULT       5 impure_data
+[ 218] 0x0                   0 FILE     LOCAL    DEFAULT     ABS init.c
+[ 225] 0x0                   0 FILE     LOCAL    DEFAULT     ABS fini.c
+[ 234] 0x0                   0 FILE     LOCAL    DEFAULT     ABS atexit.c
+[ 232] 0x0                   0 FILE     LOCAL    DEFAULT     ABS __atexit.c
+[ 243] 0x0                   0 FILE     LOCAL    DEFAULT     ABS sys_exit.c
+[ 254] 0x0                   0 FILE     LOCAL    DEFAULT     ABS errno.c
+[  31] 0x0                   0 FILE     LOCAL    DEFAULT     ABS crtstuff.c
+[ 262] 0x114B0               0 OBJECT   LOCAL    DEFAULT       2 __FRAME_END__
+[   0] 0x0                   0 FILE     LOCAL    DEFAULT     ABS 
 [ 276] 0x114C0               0 NOTYPE   LOCAL    DEFAULT       4 __fini_array_end
 [ 293] 0x114BC               0 NOTYPE   LOCAL    DEFAULT       4 __fini_array_start
 [ 312] 0x114BC               0 NOTYPE   LOCAL    DEFAULT       3 __init_array_end
 [ 329] 0x114B4               0 NOTYPE   LOCAL    DEFAULT       3 __preinit_array_end
 [ 349] 0x114B4               0 NOTYPE   LOCAL    DEFAULT       3 __init_array_start
 [ 368] 0x114B4               0 NOTYPE   LOCAL    DEFAULT       3 __preinit_array_start
-[ 390] 0x11CC0               0 OBJECT   GLOBAL   DEFAULT     ABS __global_pointer$
-[ 408] 0x10104              56 OBJECT   GLOBAL   DEFAULT       1 _Z8multiplyii
-[ 422] 0x10448               6 OBJECT   GLOBAL   DEFAULT       1 __errno
-[ 430] 0x118E8               0 OBJECT   GLOBAL   DEFAULT       6 __SDATA_BEGIN__
+[ 390] 0x11CC0               0 NOTYPE   GLOBAL   DEFAULT     ABS __global_pointer$
+[ 408] 0x10104              56 FUNC     GLOBAL   DEFAULT       1 _Z8multiplyii
+[ 422] 0x10448               6 FUNC     GLOBAL   DEFAULT       1 __errno
+[ 430] 0x118E8               0 NOTYPE   GLOBAL   DEFAULT       6 __SDATA_BEGIN__
 [ 446] 0x118EC               0 OBJECT   GLOBAL   HIDDEN        6 __dso_handle
 [ 459] 0x118E8               4 OBJECT   GLOBAL   DEFAULT       6 _global_impure_ptr
-[ 478] 0x101AE             106 OBJECT   GLOBAL   DEFAULT       1 __libc_init_array
-[ 496] 0x1037E              52 OBJECT   GLOBAL   DEFAULT       1 __libc_fini_array
-[ 514] 0x102C0             190 OBJECT   GLOBAL   DEFAULT       1 __call_exitprocs
-[ 568] 0x10084              54 OBJECT   GLOBAL   DEFAULT       1 _start
-[ 531] 0x103BC             108 OBJECT   GLOBAL   DEFAULT       1 __register_exitproc
-[ 551] 0x11910               0 OBJECT   GLOBAL   DEFAULT       7 __BSS_END__
-[ 563] 0x118F4               0 OBJECT   GLOBAL   DEFAULT       7 __bss_start
-[ 575] 0x10218             168 OBJECT   GLOBAL   DEFAULT       1 memset
-[ 582] 0x1013C              88 OBJECT   GLOBAL   DEFAULT       1 main
-[ 587] 0x103B2              10 OBJECT   GLOBAL   DEFAULT       1 atexit
+[ 478] 0x101AE             106 FUNC     GLOBAL   DEFAULT       1 __libc_init_array
+[ 496] 0x1037E              52 FUNC     GLOBAL   DEFAULT       1 __libc_fini_array
+[ 514] 0x102C0             190 FUNC     GLOBAL   DEFAULT       1 __call_exitprocs
+[ 568] 0x10084              54 FUNC     GLOBAL   DEFAULT       1 _start
+[ 531] 0x103BC             108 FUNC     GLOBAL   DEFAULT       1 __register_exitproc
+[ 551] 0x11910               0 NOTYPE   GLOBAL   DEFAULT       7 __BSS_END__
+[ 563] 0x118F4               0 NOTYPE   GLOBAL   DEFAULT       7 __bss_start
+[ 575] 0x10218             168 FUNC     GLOBAL   DEFAULT       1 memset
+[ 582] 0x1013C              88 FUNC     GLOBAL   DEFAULT       1 main
+[ 587] 0x103B2              10 FUNC     GLOBAL   DEFAULT       1 atexit
 [ 466] 0x118F0               4 OBJECT   GLOBAL   DEFAULT       6 _impure_ptr
-[ 594] 0x114C0               0 OBJECT   GLOBAL   DEFAULT       5 __DATA_BEGIN__
-[ 609] 0x118F4               0 OBJECT   GLOBAL   DEFAULT       6 _edata
-[ 288] 0x11910               0 OBJECT   GLOBAL   DEFAULT       7 _end
-[ 617] 0x10194              26 OBJECT   GLOBAL   DEFAULT       1 exit
-[ 616] 0x10428              32 OBJECT   GLOBAL   DEFAULT       1 _exit
+[ 594] 0x114C0               0 NOTYPE   GLOBAL   DEFAULT       5 __DATA_BEGIN__
+[ 609] 0x118F4               0 NOTYPE   GLOBAL   DEFAULT       6 _edata
+[ 288] 0x11910               0 NOTYPE   GLOBAL   DEFAULT       7 _end
+[ 617] 0x10194              26 FUNC     GLOBAL   DEFAULT       1 exit
+[ 616] 0x10428              32 FUNC     GLOBAL   DEFAULT       1 _exit

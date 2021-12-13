@@ -14,8 +14,22 @@ public class InstructionDecoder {
     private final ProtoInstruction ebreakProto;
 
     public InstructionDecoder() {
+        // ugly instructions with difference only in immediacies
+        ecallProto = Arrays.stream(ProtoInstructionList.PROTOS)
+                .filter(x -> x.getName().equals("ECALL"))
+                .findFirst()
+                .orElseThrow(AssertionError::new);
+        ebreakProto = Arrays.stream(ProtoInstructionList.PROTOS)
+                .filter(x -> x.getName().equals("EBREAK"))
+                .findFirst()
+                .orElseThrow(AssertionError::new);
+
         List<Integer> ambiguousType = new ArrayList<>();
         for (ProtoInstruction proto : ProtoInstructionList.PROTOS) {
+            if (proto == ecallProto || proto == ebreakProto) {
+                continue;
+            }
+
             int opcode = proto.getOpcode();
             opcode2Instruction.putIfAbsent(opcode, new ArrayList<>());
             opcode2Instruction.get(opcode).add(proto);
@@ -29,16 +43,6 @@ public class InstructionDecoder {
         for (Integer opcode : ambiguousType) {
             opcode2Type.remove(opcode);
         }
-
-        // ugly instructions with difference only in immediacies
-        ecallProto = Arrays.stream(ProtoInstructionList.PROTOS)
-                .filter(x -> x.getName().equals("ECALL"))
-                .findFirst()
-                .orElseThrow(AssertionError::new);
-        ebreakProto = Arrays.stream(ProtoInstructionList.PROTOS)
-                .filter(x -> x.getName().equals("EBREAK"))
-                .findFirst()
-                .orElseThrow(AssertionError::new);
     }
 
     public Instruction decode(long bits) {
@@ -117,7 +121,7 @@ public class InstructionDecoder {
                 stretchFrom = 20;
                 break;
         }
-        if ((imm & (1L << (stretchFrom - 1))) != 0) {
+        if ((imm & (1L << (stretchFrom))) != 0) {
             // negative value
             imm |= (-1L) << stretchFrom;
         }
@@ -150,10 +154,11 @@ public class InstructionDecoder {
         // if opcode2type does not contain this opcode, extract func3
         // (opcodes of instruction type R, U, J relate only to this type)
         int func3 = extractFunc3(bits, opcode2Type.getOrDefault(opcode, InstructionType.I));
-
         ProtoInstruction result = null;
+        assert opcode2Instruction.containsKey(opcode) :
+                String.format("Opcode %s not recognised", Integer.toBinaryString(opcode));
         for (ProtoInstruction proto : opcode2Instruction.get(opcode)) {
-            if (proto.getFunc3() == func3 && proto.getFunc7() == extractFunc7(opcode, proto.getType())) {
+            if (proto.getFunc3() == func3 && proto.getFunc7() == extractFunc7(bits, proto.getType())) {
                 assert result == null;
                 result = proto;
             }

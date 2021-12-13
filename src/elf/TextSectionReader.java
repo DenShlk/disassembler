@@ -15,16 +15,16 @@ public class TextSectionReader {
         int labelInd = 0;
 
         InstructionDecoder decoder = new InstructionDecoder();
-        for (int i = 0; i * 2 < size; i++) {
+        for (int i = 0; i * 2 < size; i+=2) {
             long value = readBytes(data, offset + i * 2, 2);
             // TODO: 10.12.2021 remove when .C is supported
             // TODO: 12.12.2021 fix 2/4 
             //assert InstructionDecoder.getInstructionLength((int) value) == 32 : "Unsupported instruction length";
             if (InstructionDecoder.getInstructionLength((int) value) == 16) {
+                i--;
                 continue;
             } else {
                 value = readBytes(data, offset + i * 2, 4);
-                i ++;
             }
 
             Instruction instr = decoder.decode(value);

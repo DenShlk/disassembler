@@ -31,21 +31,18 @@ public class LabelMarker {
         for (SymbolEntry label : labels) {
             address2label.put((int) label.st_value, label.getName());
         }
-
-        int missingLabels = 0;
+        int i = 0;
         for (Instruction instr : instructions) {
-            if (labeled.contains((int) instr.getAddress())) {
-                String label = address2label.get((int) instr.getAddress());
-                if (label == null) {
-                    label = generateMissingLabel(missingLabels++);
-                }
-                instr.setLabel(label);
+            if (address2label.containsKey((int) instr.getAddress())) {
+                instr.setLabel(address2label.get((int) instr.getAddress()));
+            } else if (labeled.contains((int) instr.getAddress())) {
+                instr.setLabel(generateMissingLabel(i++));
             }
         }
     }
 
-    private static String generateMissingLabel(int i) {
-        return String.format("LOC_%05x", i);
+    private static String generateMissingLabel(long address) {
+        return String.format("LOC_%05x", address);
     }
 
     private static int extractOffset(Instruction instr) {
