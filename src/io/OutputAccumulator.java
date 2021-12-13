@@ -4,12 +4,12 @@ public class OutputAccumulator {
 
     private final StringBuilder output = new StringBuilder();
 
-    public void print(String s) {
-        output.append(s);
+    public void print(Object s) {
+        output.append(s.toString());
     }
 
-    public void println(String s) {
-        output.append(s).append(System.lineSeparator());
+    public void println(Object s) {
+        output.append(s.toString()).append(System.lineSeparator());
     }
 
     public void println() {

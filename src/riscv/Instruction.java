@@ -64,4 +64,15 @@ public class Instruction {
     public void setLabel(String label) {
         this.label = label;
     }
+
+    public boolean isCSR() {
+        return getName().startsWith("CSR");
+    }
+
+    public long getZimm() {
+        if (!isCSR() || !getName().contains("I")) {
+            return UNDEFINED_VALUE;
+        }
+        return r1;
+    }
 }

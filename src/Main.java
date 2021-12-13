@@ -1,5 +1,5 @@
-import elf.*;
 import io.OutputAccumulator;
+import elf.*;
 import riscv.Instruction;
 import riscv.InstructionPrinter;
 
@@ -18,17 +18,12 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        long x = Integer.MIN_VALUE;
-        System.out.println(Long.toBinaryString(x));
-        System.out.println(Integer.toBinaryString((int)x));
-        System.out.println((int) x);
-
         if (args.length != 2) {
             throw new IllegalArgumentException("Illegal arguments. Must be: <input file path> <output file path>");
         }
 
         byte[] data = readBytes(args[0]);
-        System.out.printf("Read %d bytes from input file", data.length);
+        System.out.printf("Read %d bytes from input file\n", data.length);
 
         SectionHeaderInfo[] sHeaders = decodeSectionHeaders(data);
         SymbolEntry[] symbolEntries = decodeSymbolTable(data, sHeaders);
@@ -73,7 +68,7 @@ public class Main {
                 "Symbol", "Value", "Size", "Type", "Bind", "Vis", "Index", "Name");
         for (int i = 0; i < symbolEntries.length; i++) {
             SymbolEntry entry = symbolEntries[i];
-            out.printf("[%4d] %s\n", i, entry);
+            out.println(entry);
         }
     }
 

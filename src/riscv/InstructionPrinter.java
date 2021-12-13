@@ -16,6 +16,20 @@ public class InstructionPrinter {
     }
 
     private static String printOperands(Instruction instr) {
+        if (instr.isCSR()) {
+            if (instr.getZimm() != Instruction.UNDEFINED_VALUE) {
+                return String.format("%s, %s, %s",
+                        RegisterNamingConverter.toAbi(instr.getRd()),
+                        RegisterNamingConverter.CSRtoAbi(instr.getImm()),
+                        instr.getZimm()); // TODO: 12.12.2021 called zimm, probably unsigned
+            } else {
+                return String.format("%s, %s, %s",
+                        RegisterNamingConverter.toAbi(instr.getRd()),
+                        RegisterNamingConverter.CSRtoAbi(instr.getImm()),
+                        RegisterNamingConverter.toAbi(instr.getR1()));
+            }
+        }
+
         switch (instr.getType()) {
             case R:
                 return String.format("%s, %s, %s",

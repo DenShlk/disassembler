@@ -9,7 +9,7 @@ public class ProtoInstruction {
     private final int opcode;
     private final String name;
 
-    public ProtoInstruction(InstructionType type, int func3, int func7, int opcode, String name) {
+    public ProtoInstruction(InstructionType type, String name, int opcode, int func3, int func7) {
         this.type = type;
         this.func3 = func3;
         this.func7 = func7;
@@ -18,14 +18,14 @@ public class ProtoInstruction {
     }
 
     // constructor without func7 parameter, for all types except R
-    public ProtoInstruction(InstructionType type, int func3, int opcode, String name) {
-        this(type, func3, UNDEFINED_FUNC, opcode, name);
+    public ProtoInstruction(InstructionType type, String name, int opcode, int func3) {
+        this(type, name, opcode, func3, UNDEFINED_FUNC);
         assert type != InstructionType.R;
     }
 
     // constructor without func parameters, for U and J types
-    public ProtoInstruction(InstructionType type, int opcode, String name) {
-        this(type, UNDEFINED_FUNC, UNDEFINED_FUNC, opcode, name);
+    public ProtoInstruction(InstructionType type, String name, int opcode) {
+        this(type, name, opcode, UNDEFINED_FUNC);
         assert type == InstructionType.U || type == InstructionType.J;
     }
 
