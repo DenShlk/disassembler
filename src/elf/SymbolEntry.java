@@ -80,7 +80,7 @@ public class SymbolEntry extends AbstractInfo {
         return String.valueOf(st_shndx);
     }
 
-    enum EntryType {
+    public enum EntryType {
         NOTYPE,
         OBJECT,
         FUNC,

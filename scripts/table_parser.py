@@ -19,6 +19,17 @@ def find_type(s):
         return 'J'
 
 
+def build_constructor_call(itype, name, size, op_code, func3='', func7=''):
+    call = 'new ProtoInstruction('
+    call += f'InstructionType.{itype}, "{name}", ProtoInstruction.SizeType.{size}, 0b{op_code}'
+    if func3:
+        call += f', 0b{func3}'
+        if func7:
+            call += f', 0b{func7}'
+    call += '),'
+    return call
+
+
 # parsing table
 items = ['']
 for line in lines:
@@ -27,7 +38,7 @@ for line in lines:
     if line.startswith('//'):
         items.append(line)
         continue
-
+    size = "NORMAL_32"
     tokens = line.split()
     name = tokens[-1]
     tokens = tokens[:-1]
@@ -42,13 +53,7 @@ for line in lines:
         func3 = tokens[2]
     elif itype == 'S' or itype == 'B':
         func3 = tokens[3]
-    if func3:
-        if func7:
-            items.append(f'new ProtoInstruction(InstructionType.{itype}, "{name}", 0b{op_code}, 0b{func3}, 0b{func7}),')
-        else:
-            items.append(f'new ProtoInstruction(InstructionType.{itype}, "{name}", 0b{op_code}, 0b{func3}),')
-    else:
-        items.append(f'new ProtoInstruction(InstructionType.{itype}, "{name}", 0b{op_code}),')
+    items.append(build_constructor_call(itype, name, size, op_code, func3, func7))
 
 
 # read java file

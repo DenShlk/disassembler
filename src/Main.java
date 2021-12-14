@@ -1,5 +1,5 @@
-import io.OutputAccumulator;
 import elf.*;
+import io.OutputAccumulator;
 import riscv.Instruction;
 import riscv.InstructionPrinter;
 
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -53,6 +52,7 @@ public class Main {
 
         SymbolEntry[] textLabels = Arrays.stream(symbolEntries)
                 //.filter(e -> e.st_shndx == textSectionIndex)
+                .filter(e -> e.getType() == SymbolEntry.EntryType.FUNC)
                 .toArray(SymbolEntry[]::new);
 
         List<Instruction> instructions = TextSectionReader.read(data, textLabels,

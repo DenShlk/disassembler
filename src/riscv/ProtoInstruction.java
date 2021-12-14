@@ -8,25 +8,31 @@ public class ProtoInstruction {
     private final int func7;
     private final int opcode;
     private final String name;
+    private final SizeType size;
 
-    public ProtoInstruction(InstructionType type, String name, int opcode, int func3, int func7) {
+    public ProtoInstruction(InstructionType type, String name, SizeType size, int opcode, int func3, int func7) {
         this.type = type;
         this.func3 = func3;
         this.func7 = func7;
         this.opcode = opcode;
         this.name = name;
+        this.size = size;
     }
 
     // constructor without func7 parameter, for all types except R
-    public ProtoInstruction(InstructionType type, String name, int opcode, int func3) {
-        this(type, name, opcode, func3, UNDEFINED_FUNC);
+    public ProtoInstruction(InstructionType type, String name, SizeType size, int opcode, int func3) {
+        this(type, name, size, opcode, func3, UNDEFINED_FUNC);
         assert type != InstructionType.R;
     }
 
     // constructor without func parameters, for U and J types
-    public ProtoInstruction(InstructionType type, String name, int opcode) {
-        this(type, name, opcode, UNDEFINED_FUNC);
+    public ProtoInstruction(InstructionType type, String name, SizeType size, int opcode) {
+        this(type, name, size, opcode, UNDEFINED_FUNC);
         assert type == InstructionType.U || type == InstructionType.J;
+    }
+
+    public SizeType getSize() {
+        return size;
     }
 
     public InstructionType getType() {
@@ -57,6 +63,12 @@ public class ProtoInstruction {
                 ", func7=" + (func7 == UNDEFINED_FUNC ? "UNDEF" : func7) +
                 ", opcode=" + opcode +
                 ", name='" + name + '\'' +
+                ", size=" + size +
                 '}';
+    }
+
+    public enum SizeType {
+        NORMAL_32,
+        COMPRESSED_16,
     }
 }
