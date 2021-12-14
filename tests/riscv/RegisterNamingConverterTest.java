@@ -1,10 +1,13 @@
 package riscv;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RegisterNamingConverterTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     void toAbi() {
         assertEquals("zero", RegisterNamingConverter.toAbi(0));
         assertEquals("t1", RegisterNamingConverter.toAbi(6));
@@ -15,12 +18,22 @@ class RegisterNamingConverterTest {
         assertThrows(AssertionError.class, () -> RegisterNamingConverter.toAbi(-1));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void CSRtoAbi() {
         assertEquals("fflags", RegisterNamingConverter.CSRtoAbi(0x001));
         assertEquals("time", RegisterNamingConverter.CSRtoAbi(0xC01));
         assertEquals("timeh", RegisterNamingConverter.CSRtoAbi(0xC81));
         assertThrows(AssertionError.class, () -> RegisterNamingConverter.toAbi(33));
         assertThrows(AssertionError.class, () -> RegisterNamingConverter.toAbi(-1));
+    }
+
+    @Test
+    void compressedToAbi() {
+        for (int i = 0; i < 8; i++) {
+            assertEquals("x" + (i + 8), RegisterNamingConverter.compressedToAbi(i));
+        }
+        assertThrows(AssertionError.class, () -> RegisterNamingConverter.compressedToAbi(9));
+        assertThrows(AssertionError.class, () -> RegisterNamingConverter.compressedToAbi(11));
+        assertThrows(AssertionError.class, () -> RegisterNamingConverter.compressedToAbi(-1));
     }
 }

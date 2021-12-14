@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class RegisterNamingConverter {
 
-    private static final Map<Range, NamingRange> ranges = Map.of(
+    private static final Map<Range, NamingRange> RANGES = Map.of(
             new Range(0), new NamingRange("zero"),
             new Range(1), new NamingRange("ra"),
             new Range(2), new NamingRange("sp"),
@@ -15,9 +15,14 @@ public class RegisterNamingConverter {
             new Range(8, 9), new NamingRange("s", 0, 1), // what means s0/fp?
             new Range(10, 17), new NamingRange("a", 0, 7),
             new Range(18, 27), new NamingRange("s", 2, 11),
-            new Range(28, 31), new NamingRange("t", 3, 6));
+            new Range(28, 31), new NamingRange("t", 3, 6)
+    );
 
-    private static final Map<Integer, String> csrRegister2name = Map.of(
+    private static final Map<Range, NamingRange> COMPRESSED_RANGES = Map.of(
+            new Range(0, 7), new NamingRange("x", 8, 15)
+    );
+
+    private static final Map<Integer, String> CSR_REGISTER_2_NAME = Map.of(
             0x001, "fflags",
             0x002, "frm",
             0x003, "fcsr",
@@ -30,15 +35,25 @@ public class RegisterNamingConverter {
     );
 
     private static final Map<Long, String> register2name = new HashMap<>();
+    private static final Map<Long, String> compressedRegister2name = new HashMap<>();
 
     static {
-        for (Map.Entry<Range, NamingRange> entry : ranges.entrySet()) {
-            Range range = entry.getKey();
-            NamingRange naming = entry.getValue();
+        unpackRanges(RANGES, register2name);
+        unpackRanges(COMPRESSED_RANGES, compressedRegister2name);
+    }
+
+    private static void unpackRanges(Map<Range, NamingRange> ranges, Map<Long, String> fullMap) {
+        ranges.forEach((range, naming) -> {
             for (int i = 0; i < range.getLength(); i++) {
-                register2name.put((long) (range.left + i), naming.toString(i));
+                fullMap.put((long) (range.left + i), naming.toString(i));
             }
-        }
+        });
+    }
+
+
+    public static String compressedToAbi(long reg) {
+        assert compressedRegister2name.containsKey(reg) : reg;
+        return compressedRegister2name.get(reg);
     }
 
     public static String toAbi(long reg) {
@@ -47,8 +62,8 @@ public class RegisterNamingConverter {
     }
 
     public static String CSRtoAbi(long reg) {
-        assert csrRegister2name.containsKey((int) reg) : reg;
-        return csrRegister2name.get((int) reg);
+        assert CSR_REGISTER_2_NAME.containsKey((int) reg) : reg;
+        return CSR_REGISTER_2_NAME.get((int) reg);
     }
 
     private static class Range {
