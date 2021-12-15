@@ -1,11 +1,13 @@
 package riscv;
 
 import org.junit.jupiter.api.Test;
+import util.Range;
 
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: 15.12.2021 .C
 class InstructionDecoderTest {
     private final InstructionDecoder decoder = new InstructionDecoder();
 
@@ -31,12 +33,12 @@ class InstructionDecoderTest {
         StringBuilder res = new StringBuilder("0".repeat(32));
         for (Mapping map : maps) {
             if (map.from.lower == map.from.upper) {
-                for (int i = 0; i <= map.to.upper - map.to.lower; i++) {
+                for (int i = 0; i < map.to.getLength(); i++) {
                     res.setCharAt(map.to.lower + i, bits.charAt(map.from.lower));
                 }
             } else {
-                assert map.to.upper - map.to.lower == map.from.upper - map.from.lower;
-                for (int i = 0; i <= map.to.upper - map.to.lower; i++) {
+                assert map.to.getLength() == map.from.getLength();
+                for (int i = 0; i < map.to.getLength(); i++) {
                     res.setCharAt(map.to.lower + i, bits.charAt(map.from.lower + i));
                 }
             }
@@ -152,11 +154,12 @@ class InstructionDecoderTest {
     void searchProto() {
         Random random = new Random(0);
         for (ProtoInstruction proto : ProtoInstructionList.PROTOS) {
-            if (proto.getName().equals("ECALL") || proto.getName().equals("EBREAK")) {
+            if (proto.getName().equals("ECALL") || proto.getName().equals("EBREAK")
+                    || proto instanceof CompressedProtoInstruction) {
                 continue;
             }
 
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 100; i++) {
                 long instr = proto.getOpcode();
                 if (proto.getFunc3() != ProtoInstruction.UNDEFINED_FUNC) {
                     instr |= proto.getFunc3() << 12;
@@ -224,45 +227,30 @@ class InstructionDecoderTest {
 
         for (int i = 0; i < 0b11; i++) {
             for (int j = 0; j < 10; j++) {
-                assertEquals(16,
-                        InstructionDecoder.getInstructionLength((random.nextInt() << 2) + i));
+                assertEquals(InstructionSize.COMPRESSED_16,
+                        InstructionDecoder.getInstructionSize((random.nextInt() << 2) + i));
             }
         }
 
         for (int i = 0; i < 0b111; i++) {
             for (int j = 0; j < 10; j++) {
-                assertEquals(32,
-                        InstructionDecoder.getInstructionLength((random.nextInt() << 5) + (i << 2) + 0b11));
+                assertEquals(InstructionSize.NORMAL_32,
+                        InstructionDecoder.getInstructionSize((random.nextInt() << 5) + (i << 2) + 0b11));
             }
         }
 
         for (int i = 0; i < 10; i++) {
-            assertEquals(48,
-                    InstructionDecoder.getInstructionLength((random.nextInt() << 6) + 0b011111));
+            assertThrows(UnsupportedOperationException.class, () ->
+                    InstructionDecoder.getInstructionSize((random.nextInt() << 6) + 0b011111)); // 48
         }
 
         for (int i = 0; i < 10; i++) {
-            assertEquals(64,
-                    InstructionDecoder.getInstructionLength((random.nextInt() << 7) + 0b0111111));
+            assertThrows(UnsupportedOperationException.class, () ->
+                    InstructionDecoder.getInstructionSize((random.nextInt() << 7) + 0b0111111)); // 64
         }
 
 
-        assertThrows(UnsupportedOperationException.class, () -> InstructionDecoder.getInstructionLength(-1));
-    }
-
-    private static class Range {
-        int lower;
-        int upper;
-
-        public Range(int value) {
-            this.lower = value;
-            this.upper = value;
-        }
-
-        public Range(int upper, int lower) {
-            this.lower = lower;
-            this.upper = upper;
-        }
+        assertThrows(UnsupportedOperationException.class, () -> InstructionDecoder.getInstructionSize(-1));
     }
 
     private static class Mapping {

@@ -26,7 +26,7 @@ public class ProtoInstruction {
     // constructor without func parameters, for U and J types
     public ProtoInstruction(InstructionType type, String name, int opcode) {
         this(type, name, opcode, UNDEFINED_FUNC);
-        assert type == InstructionType.U || type == InstructionType.J;
+        assert type == InstructionType.U || type == InstructionType.J || type == null;
     }
 
     public InstructionSize getSize() {

@@ -15,7 +15,12 @@ public class LabelMarker {
             "BLTU",
             "BGEU",
             "JAL",
-            "JALR"
+            "JALR",
+            // C
+            "C.BEQZ",
+            "C.BNEZ",
+            "C.J",
+            "C.JAL"
     );
 
     public static void mark(List<Instruction> instructions, SymbolEntry[] labels) {

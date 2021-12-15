@@ -2,6 +2,12 @@ package riscv;
 
 public class Instruction {
     public static final long UNDEFINED_VALUE = Long.MAX_VALUE;
+    public final static Instruction UNKNOWN_INSTRUCTION = new Instruction(
+            new ProtoInstruction(null, "unknown_instruction", -1),
+            UNDEFINED_VALUE,
+            UNDEFINED_VALUE,
+            UNDEFINED_VALUE,
+            UNDEFINED_VALUE);
 
     private final ProtoInstruction proto;
     private final long r1;
@@ -10,7 +16,6 @@ public class Instruction {
     private final long imm;
     private long address;
     private String label;
-
 
     public Instruction(ProtoInstruction proto, long rd, long r1, long r2, long imm) {
         this.proto = proto;
@@ -43,6 +48,10 @@ public class Instruction {
 
     public InstructionType getType() {
         return proto.getType();
+    }
+
+    public InstructionSize getSize() {
+        return proto.getSize();
     }
 
     public String getName() {

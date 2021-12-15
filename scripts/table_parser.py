@@ -1,5 +1,15 @@
 
-with open('table_text.txt') as fin:
+import sys
+if len(sys.argv) != 3:
+    print('Given:', sys.argv)
+    print('Usage:', '<this_file>.py', '<input_file>', '<output_file>')
+    exit(-1)
+
+INPUT_FILE = sys.argv[1]
+OUTPUT_FILE = sys.argv[2]
+SHOW_SKIPPED = False
+
+with open(INPUT_FILE) as fin:
     lines = fin.readlines()
     lines = [l[:-1] for l in lines]
 
@@ -35,6 +45,8 @@ def find_compressed_type(s, func, name):
     if 'nzuimm[5:4' in s:
         return 'CIW'
 
+    return 'UNK'
+
 
 def is_rv32IMC(line):
     if 'C.F' in line:
@@ -50,16 +62,38 @@ def parse_compressed_instr(line):
     if not is_rv32IMC(line):
         return None
 
-    #print(line, end=' ')
     tokens = line.split()
     name = [t for t in tokens if t.startswith('C.')][0]
     op_code = tokens[tokens.index(name) - 1]
+
+    regs = ['', '', '']
+    for i, r in enumerate(['rd', 'rs1', 'rs2']):
+        if r not in line:
+            regs[i] = 'EXCLUDED'
+        else:
+            if r+'0' in line:
+                regs[i] = 'SHORT'
+            else:
+                regs[i] = 'FULL'
+            if r == 'rd':
+                regs[i] += '_AT_RS' + ('1' if '/rd' in line or regs[i] == 'FULL' else '2')
+            else:
+                regs[i] += '_AT_RS' + r[-1]
+    decoder = ''
+    if 'imm' not in line:
+        decoder = 'Instruction.UNDEFINED_VALUE'
+
     func = tokens[0]
-    if tokens[1] in '01':
-        func += tokens[1] # func4
+    func1 = tokens[1] if len(tokens[1]) == 1 and tokens[1] in '01' else ''
+    func2s = [t for t in tokens if len(t) == 2 and t.isdigit()]
+    func2_11_10, func2_6_5 = '', ''
+    if len(func2s) > 1:
+        func2_11_10 = func2s[0]
+    if len(func2s) > 2:
+        func2_6_5 = func2s[1]
     itype = find_compressed_type(line, func, name)
 
-    return itype, name, 16, op_code, func, None
+    return itype, name, 16, op_code, func, '', func2_11_10, func2_6_5, func1, regs, decoder
 
 
 def parse_instr(line):
@@ -85,7 +119,8 @@ def parse_instr(line):
     return itype, name, 32, op_code, func3, func7
 
 
-def build_constructor_call(itype, name, size, op_code, func3='', func7='') -> str:
+def build_constructor_call(itype, name, size, op_code, func3='', func7='', func2_11_10='', func2_6_5='', func1='',
+                           regs=['','',''], decoder=''):
     if size == 32:
         call = 'new ProtoInstruction('
         call += f'InstructionType.{itype}, "{name}", 0b{op_code}'
@@ -97,10 +132,27 @@ def build_constructor_call(itype, name, size, op_code, func3='', func7='') -> st
         return call
     else:
         call = 'new CompressedProtoInstruction('
-        call += f'CompressedFormat.{itype}, "{name}", 0b{op_code}, 0b{func3}),'
+        call += f'"{name}", 0b{op_code}, 0b{func3}, '
+        if func1:
+            call += f'{func1}, '
+        else:
+            call += f'ProtoInstruction.UNDEFINED_FUNC, '
+        if func2_11_10:
+            call += f'0b{func2_11_10}, '
+            if func2_6_5:
+                call += f'0b{func2_6_5}, '
+
+        call += f'\n'
+        call += f'        new RegistersEncodingInfo(\n'
+        call += f'                RegisterEncoding.{regs[0]},\n'
+        call += f'                RegisterEncoding.{regs[1]},\n'
+        call += f'                RegisterEncoding.{regs[2]}),\n'
+        call += f'        instr -> {decoder}\n'
+        call += f'                ),'
         return call
 
 
+decodings = []
 # parsing table
 items = ['']
 for line in lines:
@@ -110,14 +162,14 @@ for line in lines:
 
     args = parse_instr(line)
     if args:
-        items.append(build_constructor_call(*args))
-    else:
+        items += build_constructor_call(*args).split('\n')
+    elif SHOW_SKIPPED:
         # not supported
         items.append('// skipped: ' + line)
 
 
 # read java file
-with open('..\\src\\riscv\\ProtoInstructionList.java') as fout:
+with open(OUTPUT_FILE) as fout:
     text = ''.join(fout.readlines())
 
 # find start and end of array declaration
@@ -129,5 +181,5 @@ end = text.rindex('\n', start, text.index(END_TAG))
 spaces_count = 12
 # replace content of file with generated list of constructor calls
 text = text[:start] + ('\n' + ' ' * spaces_count).join(items) + text[end:]
-with open('..\\src\\riscv\\ProtoInstructionList.java', 'w') as fout:
+with open(OUTPUT_FILE, 'w') as fout:
     fout.write(text)

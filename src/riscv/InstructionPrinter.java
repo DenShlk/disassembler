@@ -16,6 +16,12 @@ public class InstructionPrinter {
     }
 
     private static String printOperands(Instruction instr) {
+        if (instr == Instruction.UNKNOWN_INSTRUCTION) {
+            return "";
+        }
+        if (instr.getSize() == InstructionSize.COMPRESSED_16) {
+            return printCompressedOperands(instr);
+        }
         if (instr.isCSR()) {
             if (instr.getZimm() != Instruction.UNDEFINED_VALUE) {
                 return String.format("%s, %s, %s",
@@ -28,6 +34,20 @@ public class InstructionPrinter {
                         RegisterNamingConverter.CSRtoAbi(instr.getImm()),
                         RegisterNamingConverter.toAbi(instr.getR1()));
             }
+        }
+        if (instr.getName().equals("LW")) {
+            return String.format("%s, %s(%s)",
+                    RegisterNamingConverter.toAbi(instr.getRd()),
+                    instr.getImm(),
+                    RegisterNamingConverter.toAbi(instr.getR1())
+            );
+        }
+        if (instr.getName().equals("SW")) {
+            return String.format("%s, %s(%s)",
+                    RegisterNamingConverter.toAbi(instr.getR2()),
+                    instr.getImm(),
+                    RegisterNamingConverter.toAbi(instr.getR1())
+            );
         }
 
         switch (instr.getType()) {
@@ -59,5 +79,65 @@ public class InstructionPrinter {
             default:
                 throw new UnsupportedOperationException("Unknown type of instruction");
         }
+    }
+
+    private static String printCompressedOperands(Instruction instr) {
+        switch (instr.getName()) {
+            case ("C.LW"):
+                return String.format("%s, %s(%s)",
+                        RegisterNamingConverter.toAbi(instr.getRd()),
+                        instr.getImm(),
+                        RegisterNamingConverter.toAbi(instr.getR1())
+                );
+            case ("C.SW"):
+                return String.format("%s, %s(%s)",
+                        RegisterNamingConverter.toAbi(instr.getR2()),
+                        instr.getImm(),
+                        RegisterNamingConverter.toAbi(instr.getR1())
+                );
+            case("C.LWSP"):
+                return String.format("%s, %s(sp)",
+                        RegisterNamingConverter.toAbi(instr.getRd()),
+                        instr.getImm()
+                );
+            case ("C.SWSP"):
+                return String.format("%s, %s(sp)",
+                        RegisterNamingConverter.toAbi(instr.getR2()),
+                        instr.getImm()
+                );
+            case ("C.ADDI4SPN"):
+                return String.format("%s, sp, %s",
+                        RegisterNamingConverter.toAbi(instr.getRd()),
+                        instr.getImm()
+                );
+            case ("C.ADDI16SP"):
+                return String.format("sp, %s",
+                        instr.getImm()
+                );
+        }
+
+        String res = "";
+        if (instr.getRd() != Instruction.UNDEFINED_VALUE) {
+            res += RegisterNamingConverter.toAbi(instr.getRd());
+        }
+        if (instr.getR1() != Instruction.UNDEFINED_VALUE) {
+            if (!res.isEmpty()) {
+                res += ", ";
+            }
+            res += RegisterNamingConverter.toAbi(instr.getR1());
+        }
+        if (instr.getR2() != Instruction.UNDEFINED_VALUE) {
+            if (!res.isEmpty()) {
+                res += ", ";
+            }
+            res += RegisterNamingConverter.toAbi(instr.getR2());
+        }
+        if (instr.getImm() != Instruction.UNDEFINED_VALUE) {
+            if (!res.isEmpty()) {
+                res += ", ";
+            }
+            res += instr.getImm();
+        }
+        return res;
     }
 }

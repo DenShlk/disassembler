@@ -5,8 +5,11 @@ import java.util.*;
 public class InstructionDecoder {
     // opcode -> instruction
     private final Map<Integer, List<ProtoInstruction>> opcode2Instruction = new HashMap<>();
+    // opcode -> compositeFunc -> instructions
+    private final Map<Integer, Map<Integer, List<CompressedProtoInstruction>>> opcode2CompProtoInstruction = new HashMap<>();
     // only for opcodes relevant to instructions of only one type
     private final Map<Integer, InstructionType> opcode2Type = new HashMap<>();
+
 
     private static final long ECALL = 0b000000000000_00000_000_00000_1110011;
     private static final long EBREAK = 0b000000000001_00000_000_00000_1110011;
@@ -26,7 +29,7 @@ public class InstructionDecoder {
 
         List<Integer> ambiguousType = new ArrayList<>();
         for (ProtoInstruction proto : ProtoInstructionList.PROTOS) {
-            if (proto == ecallProto || proto == ebreakProto) {
+            if (proto == ecallProto || proto == ebreakProto || proto instanceof CompressedProtoInstruction) {
                 continue;
             }
 
@@ -43,12 +46,31 @@ public class InstructionDecoder {
         for (Integer opcode : ambiguousType) {
             opcode2Type.remove(opcode);
         }
+
+        for (CompressedProtoInstruction proto : CompressedProtoInstructionList.PROTOS) {
+            Map<Integer, List<CompressedProtoInstruction>> func2protos = opcode2CompProtoInstruction
+                    .getOrDefault(proto.getOpcode(), null);
+            if (func2protos == null) {
+                func2protos = new HashMap<>();
+                opcode2CompProtoInstruction.put(proto.getOpcode(), func2protos);
+            }
+            List<CompressedProtoInstruction> protos = func2protos.getOrDefault(proto.getFunc3(), null);
+            if (protos == null) {
+                protos = new ArrayList<>();
+                func2protos.put(proto.getFunc3(), protos);
+            }
+            protos.add(proto);
+        }
     }
 
-    public Instruction decode(long bits) {
+    public Instruction decode(long bits, InstructionSize size) {
+        if (size == InstructionSize.COMPRESSED_16) {
+            return decodeCompressed(bits);
+        }
+
         ProtoInstruction proto = searchProto(bits);
         if (proto == null) {
-            return null;
+            return Instruction.UNKNOWN_INSTRUCTION;
         }
         switch (proto.getType()) {
             case R:
@@ -84,6 +106,54 @@ public class InstructionDecoder {
             default:
                 throw new UnsupportedOperationException("Unknown type of instruction");
         }
+    }
+
+    private Instruction decodeCompressed(long bits) {
+        int opcode = (int) (bits & 0b11);
+        int func3 = (int) ((bits >> 13) & (0b111));
+
+        if (!opcode2CompProtoInstruction.containsKey(opcode) ||
+                !opcode2CompProtoInstruction.get(opcode).containsKey(func3)) {
+            return Instruction.UNKNOWN_INSTRUCTION;
+        }
+        // assert opcode2CompProtoInstruction.containsKey(opcode) : "Unknown opcode: " + Integer.toBinaryString(opcode);
+        // assert opcode2CompProtoInstruction.get(opcode).containsKey(func3) : "Unknown func3: " + Integer.toBinaryString(func3);
+
+        CompressedProtoInstruction matchedProto = null;
+        for (CompressedProtoInstruction proto : opcode2CompProtoInstruction.get(opcode).get(func3)) {
+            if (proto.matches(bits)) {
+                assert matchedProto == null : "Implicit proto instruction match: " + Long.toBinaryString(bits);
+                matchedProto = proto;
+            }
+        }
+
+        if (matchedProto == null) {
+            return Instruction.UNKNOWN_INSTRUCTION;
+        }
+        // assert matchedProto != null : "No proto matches for instruction: " + Long.toBinaryString(bits);
+
+        return new Instruction(matchedProto,
+                extractRegFromCompressed(bits, matchedProto.getRdEncoding()),
+                extractRegFromCompressed(bits, matchedProto.getRs1Encoding()),
+                extractRegFromCompressed(bits, matchedProto.getRs2Encoding()),
+                matchedProto.extractImmediate(bits)
+        );
+    }
+
+    public long extractRegFromCompressed(long bits, CompressedProtoInstruction.RegisterEncoding encoding) {
+        switch (encoding) {
+            case EXCLUDED:
+                return Instruction.UNDEFINED_VALUE;
+            case FULL_AT_RS1:
+                return (bits >> 7) & 0b11111;
+            case SHORT_AT_RS1:
+                return ((bits >> 7) & 0b111) + 8;
+            case FULL_AT_RS2:
+                return (bits >> 2) & 0b11111;
+            case SHORT_AT_RS2:
+                return ((bits >> 2) & 0b111) + 8;
+        }
+        throw new IllegalArgumentException("Unknown register encoding: " + encoding);
     }
 
     public long extractImmediate(InstructionType type, long bits) {
@@ -155,8 +225,11 @@ public class InstructionDecoder {
         // (opcodes of instruction type R, U, J relate only to this type)
         int func3 = extractFunc3(bits, opcode2Type.getOrDefault(opcode, InstructionType.I));
         ProtoInstruction result = null;
-        assert opcode2Instruction.containsKey(opcode) :
-                String.format("Opcode %s not recognised", Integer.toBinaryString(opcode));
+        if (!opcode2Instruction.containsKey(opcode)) {
+            return null;
+        }
+        // assert opcode2Instruction.containsKey(opcode) :
+        //         String.format("Opcode %s not recognised", Integer.toBinaryString(opcode));
         for (ProtoInstruction proto : opcode2Instruction.get(opcode)) {
             if (proto.getFunc3() == func3 && proto.getFunc7() == extractFunc7(bits, proto.getType())) {
                 assert result == null;
@@ -180,18 +253,12 @@ public class InstructionDecoder {
         return ProtoInstruction.UNDEFINED_FUNC;
     }
 
-    public static int getInstructionLength(int word16) {
+    public static InstructionSize getInstructionSize(int word16) {
         if ((word16 & 0b11) != 0b11) {
-            return 16;
+            return InstructionSize.COMPRESSED_16;
         }
         if ((word16 & 0b11100) != 0b11100) {
-            return 32;
-        }
-        if ((word16 & (1 << 5)) == 0) {
-            return 48;
-        }
-        if ((word16 & (1 << 6)) == 0) {
-            return 64;
+            return InstructionSize.NORMAL_32;
         }
         throw new UnsupportedOperationException("Unimplemented instruction length");
     }

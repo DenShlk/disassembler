@@ -1,5 +1,7 @@
 package riscv;
 
+import util.Range;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,15 +13,15 @@ public class RegisterNamingConverter {
             new Range(2), new NamingRange("sp"),
             new Range(3), new NamingRange("gp"),
             new Range(4), new NamingRange("tp"),
-            new Range(5, 7), new NamingRange("t", 0, 2),
-            new Range(8, 9), new NamingRange("s", 0, 1), // what means s0/fp?
-            new Range(10, 17), new NamingRange("a", 0, 7),
-            new Range(18, 27), new NamingRange("s", 2, 11),
-            new Range(28, 31), new NamingRange("t", 3, 6)
+            new Range(7, 5), new NamingRange("t", 2, 0),
+            new Range(9, 8), new NamingRange("s", 1, 0), // what means s0/fp?
+            new Range(17, 10), new NamingRange("a", 7, 0),
+            new Range(27, 18), new NamingRange("s", 11, 2),
+            new Range(31, 28), new NamingRange("t", 6, 3)
     );
 
     private static final Map<Range, NamingRange> COMPRESSED_RANGES = Map.of(
-            new Range(0, 7), new NamingRange("x", 8, 15)
+            new Range(7, 0), new NamingRange("x", 15, 8)
     );
 
     private static final Map<Integer, String> CSR_REGISTER_2_NAME = Map.of(
@@ -45,58 +47,39 @@ public class RegisterNamingConverter {
     private static void unpackRanges(Map<Range, NamingRange> ranges, Map<Long, String> fullMap) {
         ranges.forEach((range, naming) -> {
             for (int i = 0; i < range.getLength(); i++) {
-                fullMap.put((long) (range.left + i), naming.toString(i));
+                fullMap.put((long) (range.lower + i), naming.toString(i));
             }
         });
     }
 
-
+    @Deprecated
     public static String compressedToAbi(long reg) {
-        assert compressedRegister2name.containsKey(reg) : reg;
+        assert compressedRegister2name.containsKey(reg) : "Compressed register " + reg + " is not recognised";
         return compressedRegister2name.get(reg);
     }
 
     public static String toAbi(long reg) {
-        assert register2name.containsKey(reg) : reg;
+        assert register2name.containsKey(reg) : "Register " + reg + " is not recognised";
         return register2name.get(reg);
     }
 
     public static String CSRtoAbi(long reg) {
-        assert CSR_REGISTER_2_NAME.containsKey((int) reg) : reg;
+        assert CSR_REGISTER_2_NAME.containsKey((int) reg) : "CSR register " + reg + " is not recognised";
         return CSR_REGISTER_2_NAME.get((int) reg);
-    }
-
-    private static class Range {
-        public final int left;
-        public final int right;
-
-        public Range(int value) {
-            this(value, value);
-        }
-
-        public Range(int left, int right) {
-            assert left <= right;
-            this.left = left;
-            this.right = right;
-        }
-
-        public int getLength() {
-            return right - left + 1;
-        }
     }
 
     private static class NamingRange extends Range {
         public final String pref;
         private final boolean hasIndex;
 
-        private NamingRange(String pref, int left, int right, boolean hasIndex) {
-            super(left, right);
+        private NamingRange(String pref, int upper, int lower, boolean hasIndex) {
+            super(upper, lower);
             this.pref = pref;
             this.hasIndex = hasIndex;
         }
 
-        public NamingRange(String pref, int left, int right) {
-            this(pref, left, right, true);
+        public NamingRange(String pref, int upper, int lower) {
+            this(pref, upper, lower, true);
         }
 
         public NamingRange(String pref, int value) {
@@ -108,7 +91,7 @@ public class RegisterNamingConverter {
         }
 
         public String toString(int i) {
-            return pref + (hasIndex ? left + i : "");
+            return pref + (hasIndex ? lower + i : "");
         }
     }
 }
