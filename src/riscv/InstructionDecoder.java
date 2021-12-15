@@ -70,7 +70,7 @@ public class InstructionDecoder {
 
         ProtoInstruction proto = searchProto(bits);
         if (proto == null) {
-            return Instruction.UNKNOWN_INSTRUCTION;
+            return Instruction.unknownInstruction();
         }
         switch (proto.getType()) {
             case R:
@@ -114,7 +114,7 @@ public class InstructionDecoder {
 
         if (!opcode2CompProtoInstruction.containsKey(opcode) ||
                 !opcode2CompProtoInstruction.get(opcode).containsKey(func3)) {
-            return Instruction.UNKNOWN_INSTRUCTION;
+            return Instruction.unknownInstruction();
         }
         // assert opcode2CompProtoInstruction.containsKey(opcode) : "Unknown opcode: " + Integer.toBinaryString(opcode);
         // assert opcode2CompProtoInstruction.get(opcode).containsKey(func3) : "Unknown func3: " + Integer.toBinaryString(func3);
@@ -128,7 +128,7 @@ public class InstructionDecoder {
         }
 
         if (matchedProto == null) {
-            return Instruction.UNKNOWN_INSTRUCTION;
+            return Instruction.unknownInstruction();
         }
         // assert matchedProto != null : "No proto matches for instruction: " + Long.toBinaryString(bits);
 

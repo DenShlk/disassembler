@@ -24,24 +24,29 @@ public class LabelMarker {
     );
 
     public static void mark(List<Instruction> instructions, SymbolEntry[] labels) {
-        Set<Integer> labeled = new HashSet<>();
+        Map<Long, String> address2label = new HashMap<>();
+        for (SymbolEntry label : labels) {
+            address2label.put(label.st_value, label.getName());
+        }
 
+        int missingLabels = 0;
         for (Instruction instr : instructions) {
             if (controlInstructions.contains(instr.getName())) {
-                labeled.add((int) (instr.getAddress() + extractOffset(instr)));
+                //labeled.add((int) (instr.getAddress() + extractOffset(instr)));
+                long pointsTo = instr.getAddress() + extractOffset(instr);
+                if (address2label.containsKey(pointsTo)) {
+                    instr.setOutLabel(address2label.get(pointsTo));
+                } else {
+                    instr.setOutLabel(generateMissingLabel(missingLabels++));
+                    address2label.put(pointsTo, instr.getOutLabel());
+                }
             }
         }
 
-        Map<Integer, String> address2label = new HashMap<>();
-        for (SymbolEntry label : labels) {
-            address2label.put((int) label.st_value, label.getName());
-        }
-        int i = 0;
         for (Instruction instr : instructions) {
-            if (address2label.containsKey((int) instr.getAddress())) {
-                instr.setLabel(address2label.get((int) instr.getAddress()));
-            } else if (labeled.contains((int) instr.getAddress())) {
-                instr.setLabel(generateMissingLabel(i++));
+            String label = address2label.getOrDefault(instr.getAddress(), null);
+            if (label != null) {
+                instr.setLabel(label);
             }
         }
     }

@@ -2,12 +2,7 @@ package riscv;
 
 public class Instruction {
     public static final long UNDEFINED_VALUE = Long.MAX_VALUE;
-    public final static Instruction UNKNOWN_INSTRUCTION = new Instruction(
-            new ProtoInstruction(null, "unknown_instruction", -1),
-            UNDEFINED_VALUE,
-            UNDEFINED_VALUE,
-            UNDEFINED_VALUE,
-            UNDEFINED_VALUE);
+    private static final int UNKNOWN_INSTRUCTION_OPCODE = -1;
 
     private final ProtoInstruction proto;
     private final long r1;
@@ -17,12 +12,27 @@ public class Instruction {
     private long address;
     private String label;
 
+    private String outLabel;
+
     public Instruction(ProtoInstruction proto, long rd, long r1, long r2, long imm) {
         this.proto = proto;
         this.r1 = r1;
         this.r2 = r2;
         this.rd = rd;
         this.imm = imm;
+    }
+
+    public boolean isUnknownInstruction() {
+        return proto.getOpcode() == UNKNOWN_INSTRUCTION_OPCODE;
+    }
+
+    public static Instruction unknownInstruction() {
+        return new Instruction(
+                new ProtoInstruction(null, "unknown_instruction", UNKNOWN_INSTRUCTION_OPCODE),
+                UNDEFINED_VALUE,
+                UNDEFINED_VALUE,
+                UNDEFINED_VALUE,
+                UNDEFINED_VALUE);
     }
 
     @Override
@@ -83,5 +93,17 @@ public class Instruction {
             return UNDEFINED_VALUE;
         }
         return r1;
+    }
+
+    public String getOutLabel() {
+        return outLabel;
+    }
+
+    public boolean hasOutLabel() {
+        return outLabel != null;
+    }
+
+    public void setOutLabel(String outLabel) {
+        this.outLabel = outLabel;
     }
 }

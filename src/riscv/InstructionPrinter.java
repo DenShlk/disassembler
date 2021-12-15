@@ -16,7 +16,7 @@ public class InstructionPrinter {
     }
 
     private static String printOperands(Instruction instr) {
-        if (instr == Instruction.UNKNOWN_INSTRUCTION) {
+        if (instr.isUnknownInstruction()) {
             return "";
         }
         if (instr.getSize() == InstructionSize.COMPRESSED_16) {
@@ -68,13 +68,13 @@ public class InstructionPrinter {
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getR1()),
                         RegisterNamingConverter.toAbi(instr.getR2()),
-                        instr.getImm()
+                        instr.hasOutLabel() ? instr.getOutLabel() : instr.getImm()
                 );
             case U:
             case J:
                 return String.format("%s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),
-                        instr.getImm()
+                        instr.hasOutLabel() ? instr.getOutLabel() : instr.getImm()
                 );
             default:
                 throw new UnsupportedOperationException("Unknown type of instruction");
@@ -132,7 +132,12 @@ public class InstructionPrinter {
             }
             res += RegisterNamingConverter.toAbi(instr.getR2());
         }
-        if (instr.getImm() != Instruction.UNDEFINED_VALUE) {
+        if (instr.hasOutLabel()) {
+            if (!res.isEmpty()) {
+                res += ", ";
+            }
+            res += instr.getOutLabel();
+        } else if (instr.getImm() != Instruction.UNDEFINED_VALUE) {
             if (!res.isEmpty()) {
                 res += ", ";
             }
