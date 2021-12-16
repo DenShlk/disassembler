@@ -4,7 +4,6 @@ import elf.SymbolEntry;
 
 import java.util.*;
 
-// TODO: 14.12.2021 tests
 public class LabelMarker {
 
     private final static Set<String> controlInstructions = Set.of(

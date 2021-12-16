@@ -34,7 +34,7 @@ public class InstructionPrinter {
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),
                         RegisterNamingConverter.CSRtoAbi(instr.getImm()),
-                        instr.getZimm()); // TODO: 12.12.2021 called zimm, probably unsigned
+                        instr.getZimm());
             } else {
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),

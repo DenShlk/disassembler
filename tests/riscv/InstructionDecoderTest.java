@@ -13,7 +13,7 @@ class InstructionDecoderTest {
 
     @Test
     void decode() {
-        // TODO: 13.12.2021
+
     }
 
     @Test
