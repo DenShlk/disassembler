@@ -55,9 +55,8 @@ public class Main {
                 .filter(e -> e.getType() == SymbolEntry.EntryType.FUNC)
                 .toArray(SymbolEntry[]::new);
 
-        List<Instruction> instructions = TextSectionReader.read(data, textLabels,
+        return TextSectionReader.read(data, textLabels,
                 (int) textSection.sh_offset, (int) textSection.sh_size, (int) textSection.sh_addr);
-        return instructions;
     }
 
     private static void printSymtab(SymbolEntry[] symbolEntries) {
@@ -67,7 +66,9 @@ public class Main {
                 "Symbol", "Value", "Size", "Type", "Bind", "Vis", "Index", "Name");
         for (int i = 0; i < symbolEntries.length; i++) {
             SymbolEntry entry = symbolEntries[i];
-            out.println(entry);
+            //out.println(entry);
+            // to print index of entry instead of index of symbol in string table:
+            out.println(entry.toStringWithIndex(i));
         }
     }
 

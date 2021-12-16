@@ -28,6 +28,11 @@ public class SymbolEntry extends AbstractInfo {
                 st_name, st_value, st_size, getType(), getBind(), getVisibility(), getIndexString(), name);
     }
 
+    public String toStringWithIndex(int index) {
+        return String.format("[%4d] 0x%-15X %5d %-8s %-8s %-8s %6s %s",
+                index, st_value, st_size, getType(), getBind(), getVisibility(), getIndexString(), name);
+    }
+
     private static final Map<Integer, EntryVisibility> number2Visibility = Map.of(
             0, EntryVisibility.DEFAULT,
             1, EntryVisibility.INTERNAL,

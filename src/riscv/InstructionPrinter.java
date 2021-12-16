@@ -1,7 +1,14 @@
 package riscv;
 
+import java.util.Set;
+
 public class InstructionPrinter {
 
+    private static final boolean LOWER_CASE_NAMES = true;
+    private static final Set<String> LOAD_INSTRUCTIONS = Set.of("LW", "LH", "LHU", "LB", "LBU");
+    private static final Set<String> STORE_INSTRUCTIONS = Set.of("SW", "SH", "SB");
+    private static final Set<String> BINARY_OP_INSTRUCTIONS = Set.of("SLLI", "SRLI", "SRAI");
+    private static final Set<String> IGNORE_OPERANDS_INSTRUCTIONS = Set.of("ECALL", "EBREAK");
     private static final String UNKNOWN_INSTRUCTION = "unknown_instruction";
 
     public static String print(Instruction instr) {
@@ -11,7 +18,7 @@ public class InstructionPrinter {
         return String.format("%08x %11s %s %s",
                 instr.getAddress(),
                 instr.getLabel() == null ? "" : instr.getLabel() + ":",
-                instr.getName(),
+                LOWER_CASE_NAMES ? instr.getName().toLowerCase() : instr.getName(),
                 printOperands(instr));
     }
 
@@ -35,23 +42,35 @@ public class InstructionPrinter {
                         RegisterNamingConverter.toAbi(instr.getRs1()));
             }
         }
-        if (instr.getName().equals("LW")) {
+        if (LOAD_INSTRUCTIONS.contains(instr.getName())) {
             return String.format("%s, %s(%s)",
                     RegisterNamingConverter.toAbi(instr.getRd()),
                     instr.getImm(),
                     RegisterNamingConverter.toAbi(instr.getRs1())
             );
         }
-        if (instr.getName().equals("SW")) {
+        if (STORE_INSTRUCTIONS.contains(instr.getName())) {
             return String.format("%s, %s(%s)",
                     RegisterNamingConverter.toAbi(instr.getRs2()),
                     instr.getImm(),
                     RegisterNamingConverter.toAbi(instr.getRs1())
             );
         }
+        if (BINARY_OP_INSTRUCTIONS.contains(instr.getName())) {
+            int shamt = (int) instr.getRs2();
+            return String.format("%s, %s, %s",
+                    RegisterNamingConverter.toAbi(instr.getRd()),
+                    RegisterNamingConverter.toAbi(instr.getRs1()),
+                    shamt
+            );
+        }
+        if (IGNORE_OPERANDS_INSTRUCTIONS.contains(instr.getName())) {
+            return "";
+        }
 
         switch (instr.getType()) {
             case R:
+                assert !instr.hasOutLabel();
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),
                         RegisterNamingConverter.toAbi(instr.getRs1()),
@@ -61,7 +80,7 @@ public class InstructionPrinter {
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),
                         RegisterNamingConverter.toAbi(instr.getRs1()),
-                        instr.getImm()
+                        instr.hasOutLabel() ? instr.getOutLabel() : instr.getImm()
                 );
             case S:
             case B:

@@ -15,7 +15,6 @@ public class LabelMarker {
             "BLTU",
             "BGEU",
             "JAL",
-            "JALR",
             // C
             "C.BEQZ",
             "C.BNEZ",

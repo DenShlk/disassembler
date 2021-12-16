@@ -55,7 +55,7 @@ public class CompressedProtoInstructionList {
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED),
-                    instr -> extractUimm5(instr),
+                    instr -> extractImm5(instr),
                     instr -> extractFullRs1(instr) != 0
             ),
             new CompressedProtoInstruction("C.JAL", 0b01, 0b001, ProtoInstruction.UNDEFINED_FUNC,
@@ -70,7 +70,7 @@ public class CompressedProtoInstructionList {
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED),
-                    instr -> extractUimm5(instr)
+                    instr -> extractImm5(instr)
             ),
             new CompressedProtoInstruction("C.ADDI16SP", 0b01, 0b011, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
