@@ -16,6 +16,46 @@ class InstructionDecoderTest {
         // TODO: 13.12.2021
     }
 
+    @Test
+    void extractRegFromCompressed() {
+
+    }
+
+    @Test
+    void decodeCompressed() {
+        String unk = Instruction.unknownInstruction().getName();
+        assertNotEquals(unk, decoder.decode(Integer.parseInt("1", 2), InstructionSize.COMPRESSED_16).getName());
+        int rs1Mask = 0b11111_00000_00;
+        int imm5Mask = 0b1_00000_11111_00;
+
+        for (int bits = 0; bits < (1 << 16); bits++) {
+            boolean decodable = true;
+            int func = bits >> 13;
+            int opcode = bits & 0b11;
+
+            // not compressed and instructions between C.NOP and C.ADDI
+            if (opcode == 0b11 || (bits & rs1Mask) == 0 && (bits & imm5Mask) != 0 && opcode == 0b01 && func == 0b000) {
+                decodable = false;
+            }
+            // table 12.3
+            if (func == 0b001 && opcode != 0b01 || func == 0b011 && opcode != 0b01 || func == 0b100 && opcode == 0b00 ||
+                    func == 0b101 && opcode != 0b01 || func == 0b111 && opcode != 0b01) {
+                decodable = false;
+            }
+            int reservedCheck = bits & 0b111_1_11_000_11_000_11;
+            if (reservedCheck == 0b1001110000000001 || reservedCheck == 0b1001110000100001 ||
+                    reservedCheck == 0b1001110001000001 || reservedCheck == 0b1001110001100001) {
+                decodable = false;
+            }
+
+            if (decodable) {
+                assertNotEquals(unk, decoder.decode(bits, InstructionSize.COMPRESSED_16).getName());
+            } else {
+                assertEquals(unk, decoder.decode(bits, InstructionSize.COMPRESSED_16).getName());
+            }
+        }
+    }
+
     private String toFullBinaryString(int x) {
         String bits = Integer.toBinaryString(x);
         bits = "0".repeat(32 - bits.length()) + bits;
@@ -119,10 +159,10 @@ class InstructionDecoderTest {
             for (int r = 0; r < 32; r++) {
                 long rd = (random.nextInt() << 12) + random.nextInt(1 << 7) + (r << 7);
                 assertEquals(r, decoder.extractRegister(InstructionDecoder.Register.Rd, rd));
-                long r1 = (random.nextInt() << 20) + random.nextInt(1 << 15) + (r << 15);
-                assertEquals(r, decoder.extractRegister(InstructionDecoder.Register.R1, r1));
-                long r2 = (random.nextInt() << 25) + random.nextInt(1 << 20) + (r << 20);
-                assertEquals(r, decoder.extractRegister(InstructionDecoder.Register.R2, r2));
+                long rs1 = (random.nextInt() << 20) + random.nextInt(1 << 15) + (r << 15);
+                assertEquals(r, decoder.extractRegister(InstructionDecoder.Register.Rs1, rs1));
+                long rs2 = (random.nextInt() << 25) + random.nextInt(1 << 20) + (r << 20);
+                assertEquals(r, decoder.extractRegister(InstructionDecoder.Register.Rs2, rs2));
             }
         }
     }

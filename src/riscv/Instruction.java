@@ -5,8 +5,8 @@ public class Instruction {
     private static final int UNKNOWN_INSTRUCTION_OPCODE = -1;
 
     private final ProtoInstruction proto;
-    private final long r1;
-    private final long r2;
+    private final long rs1;
+    private final long rs2;
     private final long rd;
     private final long imm;
     private long address;
@@ -14,10 +14,10 @@ public class Instruction {
 
     private String outLabel;
 
-    public Instruction(ProtoInstruction proto, long rd, long r1, long r2, long imm) {
+    public Instruction(ProtoInstruction proto, long rd, long rs1, long rs2, long imm) {
         this.proto = proto;
-        this.r1 = r1;
-        this.r2 = r2;
+        this.rs1 = rs1;
+        this.rs2 = rs2;
         this.rd = rd;
         this.imm = imm;
     }
@@ -37,15 +37,15 @@ public class Instruction {
 
     @Override
     public String toString() {
-        return String.format("%s %d, %d, %d, %d", proto.getName(), rd, r1, r2, imm);
+        return String.format("%s %d, %d, %d, %d", proto.getName(), rd, rs1, rs2, imm);
     }
 
-    public long getR1() {
-        return r1;
+    public long getRs1() {
+        return rs1;
     }
 
-    public long getR2() {
-        return r2;
+    public long getRs2() {
+        return rs2;
     }
 
     public long getRd() {
@@ -92,7 +92,7 @@ public class Instruction {
         if (!isCSR() || !getName().contains("I")) {
             return UNDEFINED_VALUE;
         }
-        return r1;
+        return rs1;
     }
 
     public String getOutLabel() {

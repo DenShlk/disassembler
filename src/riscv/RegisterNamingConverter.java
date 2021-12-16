@@ -54,17 +54,23 @@ public class RegisterNamingConverter {
 
     @Deprecated
     public static String compressedToAbi(long reg) {
-        assert compressedRegister2name.containsKey(reg) : "Compressed register " + reg + " is not recognised";
+        if (!compressedRegister2name.containsKey(reg)) {
+            throw new IllegalArgumentException("Compressed register " + reg + " is not recognised");
+        }
         return compressedRegister2name.get(reg);
     }
 
     public static String toAbi(long reg) {
-        assert register2name.containsKey(reg) : "Register " + reg + " is not recognised";
+        if (!register2name.containsKey(reg)) {
+            throw new IllegalArgumentException("Register " + reg + " is not recognised");
+        }
         return register2name.get(reg);
     }
 
     public static String CSRtoAbi(long reg) {
-        assert CSR_REGISTER_2_NAME.containsKey((int) reg) : "CSR register " + reg + " is not recognised";
+        if (! CSR_REGISTER_2_NAME.containsKey((int) reg)) {
+            throw new IllegalArgumentException("CSR register " + reg + " is not recognised");
+        }
         return CSR_REGISTER_2_NAME.get((int) reg);
     }
 

@@ -18,7 +18,7 @@ public class SymbolEntry extends AbstractInfo {
     }
 
     public void setName(String name) {
-        assert this.name == null : "Name is already initialized";
+        assert this.name == null : "Name has already been initialized";
         this.name = name;
     }
 

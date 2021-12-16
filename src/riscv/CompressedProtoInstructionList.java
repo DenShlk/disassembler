@@ -48,7 +48,7 @@ public class CompressedProtoInstructionList {
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED),
                     instr -> Instruction.UNDEFINED_VALUE,
-                    instr -> extractFullRs1(instr) == 0
+                    instr -> extractFullRs1(instr) == 0 && extractUimm5(instr) == 0
             ),
             new CompressedProtoInstruction("C.ADDI", 0b01, 0b000, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
@@ -126,7 +126,7 @@ public class CompressedProtoInstructionList {
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.EXCLUDED),
                     instr -> extractImm5(instr)
-                    ),
+            ),
             new CompressedProtoInstruction("C.SUB", 0b01, 0b100, 0, 0b11, 0b00,
                     new RegistersEncodingInfo(
                             RegisterEncoding.SHORT_AT_RS1,
@@ -134,122 +134,122 @@ public class CompressedProtoInstructionList {
                             RegisterEncoding.SHORT_AT_RS2),
                     instr -> Instruction.UNDEFINED_VALUE
             ),
-            new CompressedProtoInstruction("C.XOR", 0b01, 0b100, 0, 0b11, 0b01, 
+            new CompressedProtoInstruction("C.XOR", 0b01, 0b100, 0, 0b11, 0b01,
                     new RegistersEncodingInfo(
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.SHORT_AT_RS2),
                     instr -> Instruction.UNDEFINED_VALUE
-                            ),
-            new CompressedProtoInstruction("C.OR", 0b01, 0b100, 0, 0b11, 0b10, 
+            ),
+            new CompressedProtoInstruction("C.OR", 0b01, 0b100, 0, 0b11, 0b10,
                     new RegistersEncodingInfo(
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.SHORT_AT_RS2),
                     instr -> Instruction.UNDEFINED_VALUE
-                            ),
-            new CompressedProtoInstruction("C.AND", 0b01, 0b100, 0, 0b11, 0b11, 
+            ),
+            new CompressedProtoInstruction("C.AND", 0b01, 0b100, 0, 0b11, 0b11,
                     new RegistersEncodingInfo(
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.SHORT_AT_RS2),
                     instr -> Instruction.UNDEFINED_VALUE
-                            ),
+            ),
             //100 1 11 — 10 — 01 Reserved
             //100 1 11 — 11 — 01 Reserved
-            new CompressedProtoInstruction("C.J", 0b01, 0b101, ProtoInstruction.UNDEFINED_FUNC, 
+            new CompressedProtoInstruction("C.J", 0b01, 0b101, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED),
                     instr -> extractImm11(instr)
-                            ),
-            new CompressedProtoInstruction("C.BEQZ", 0b01, 0b110, ProtoInstruction.UNDEFINED_FUNC, 
+            ),
+            new CompressedProtoInstruction("C.BEQZ", 0b01, 0b110, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.EXCLUDED),
                     instr -> extendSign(reorder(instr, 12, 8, 4, 3, -1, -1, -1, 7, 6, 2, 1, 5), 8)
-                            ),
-            new CompressedProtoInstruction("C.BNEZ", 0b01, 0b111, ProtoInstruction.UNDEFINED_FUNC, 
+            ),
+            new CompressedProtoInstruction("C.BNEZ", 0b01, 0b111, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.SHORT_AT_RS1,
                             RegisterEncoding.EXCLUDED),
                     instr -> extendSign(reorder(instr, 12, 8, 4, 3, -1, -1, -1, 7, 6, 2, 1, 5), 8)
-                            ),
-            
+            ),
+
             // quadrant 2
-            new CompressedProtoInstruction("C.SLLI", 0b10, 0b000, ProtoInstruction.UNDEFINED_FUNC, 
+            new CompressedProtoInstruction("C.SLLI", 0b10, 0b000, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED),
                     instr -> extractUimm5(instr),
                     instr -> extractUimm5(instr) != 0
-                            ),
-            new CompressedProtoInstruction("C.SLLI64", 0b10, 0b000, 0, 
+            ),
+            new CompressedProtoInstruction("C.SLLI64", 0b10, 0b000, 0,
                     new RegistersEncodingInfo(
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED),
                     instr -> Instruction.UNDEFINED_VALUE,
                     instr -> extractUimm5(instr) == 0
-                            ),
-            new CompressedProtoInstruction("C.LWSP", 0b10, 0b010, ProtoInstruction.UNDEFINED_FUNC, 
+            ),
+            new CompressedProtoInstruction("C.LWSP", 0b10, 0b010, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED),
                     instr -> reorder(instr, 12, 5, -1, -1, -1, -1, -1, 4, 3, 2, 7, 6)
-                            ),
-            new CompressedProtoInstruction("C.JR", 0b10, 0b100, 0, 
+            ),
+            new CompressedProtoInstruction("C.JR", 0b10, 0b100, 0,
                     new RegistersEncodingInfo(
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED),
                     instr -> Instruction.UNDEFINED_VALUE,
                     instr -> extractUimm5(instr) == 0
-                            ),
-            new CompressedProtoInstruction("C.MV", 0b10, 0b100, 0, 
+            ),
+            new CompressedProtoInstruction("C.MV", 0b10, 0b100, 0,
                     new RegistersEncodingInfo(
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.FULL_AT_RS2),
                     instr -> Instruction.UNDEFINED_VALUE,
                     instr -> extractFullRs2(instr) != 0
-                            ),
-            new CompressedProtoInstruction("C.EBREAK", 0b10, 0b100, 1, 
+            ),
+            new CompressedProtoInstruction("C.EBREAK", 0b10, 0b100, 1,
                     new RegistersEncodingInfo(
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED),
                     instr -> Instruction.UNDEFINED_VALUE,
                     instr -> extractFullRs1(instr) == 0 && extractFullRs2(instr) == 0
-                            ),
-            new CompressedProtoInstruction("C.JALR", 0b10, 0b100, 1, 
+            ),
+            new CompressedProtoInstruction("C.JALR", 0b10, 0b100, 1,
                     new RegistersEncodingInfo(
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.EXCLUDED),
                     instr -> Instruction.UNDEFINED_VALUE,
                     instr -> extractFullRs1(instr) != 0 && extractFullRs2(instr) == 0
-                            ),
-            new CompressedProtoInstruction("C.ADD", 0b10, 0b100, 1, 
+            ),
+            new CompressedProtoInstruction("C.ADD", 0b10, 0b100, 1,
                     new RegistersEncodingInfo(
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.FULL_AT_RS1,
                             RegisterEncoding.FULL_AT_RS2),
                     instr -> Instruction.UNDEFINED_VALUE,
                     instr -> extractFullRs2(instr) != 0
-                            ),
-            new CompressedProtoInstruction("C.SWSP", 0b10, 0b110, ProtoInstruction.UNDEFINED_FUNC, 
+            ),
+            new CompressedProtoInstruction("C.SWSP", 0b10, 0b110, ProtoInstruction.UNDEFINED_FUNC,
                     new RegistersEncodingInfo(
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.EXCLUDED,
                             RegisterEncoding.FULL_AT_RS2),
                     instr -> reorder(instr, 12, 5, 4, 3, 2, 7, 6)
-                            ),
+            ),
             // <list end>
     };
 

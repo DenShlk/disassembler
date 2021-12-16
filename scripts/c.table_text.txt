@@ -1,14 +1,14 @@
 // C, illegal/reserved instructions are manually disabled
 
 // quadrant 0
-//000 0 0 00 Illegal instruction
+// 000 0 0 00 Illegal instruction
 000 nzuimm[5:4|9:6|2|3] rd0 00 C.ADDI4SPN (RES, nzuimm=0)
 001 uimm[5:3] rs10 uimm[7:6] rd0 00 C.FLD (RV32/64)
 001 uimm[5:4|8] rs10 uimm[7:6] rd0 00 C.LQ (RV128)
 010 uimm[5:3] rs10 uimm[2|6] rd0 00 C.LW
 011 uimm[5:3] rs10 uimm[2|6] rd0 00 C.FLW (RV32)
 011 uimm[5:3] rs10 uimm[7:6] rd0 00 C.LD (RV64/128)
-//100 — 0 Reserved
+// 100 — 00 Reserved
 101 uimm[5:3] rs10 uimm[7:6] rs20 00 C.FSD (RV32/64)
 101 uimm[5:4|8] rs10 uimm[7:6] rs20 00 C.SQ (RV128)
 110 uimm[5:3] rs10 uimm[2|6] rs20 00 C.SW
@@ -32,8 +32,10 @@
 100 0 11 rs10/rd0 01 rs20 01 C.XOR
 100 0 11 rs10/rd0 10 rs20 01 C.OR
 100 0 11 rs10/rd0 11 rs20 01 C.AND
-//100 1 11 — 10 — 01 Reserved
-//100 1 11 — 11 — 01 Reserved
+// 100 1 11 rs10/rd0 00 rs20 01 C.SUBW (RV64/128; RV32 RES)
+// 100 1 11 rs10/rd0 01 rs20 01 C.ADDW (RV64/128; RV32 RES)
+// 100 1 11 — 10 — 01 Reserved
+// 100 1 11 — 11 — 01 Reserved
 101 imm[11|4|9:8|10|6|7|3:1|5] 01 C.J
 110 imm[8|4:3] rs10 imm[7:6|2:1|5] 01 C.BEQZ
 111 imm[8|4:3] rs10 imm[7:6|2:1|5] 01 C.BNEZ

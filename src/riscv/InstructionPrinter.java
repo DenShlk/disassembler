@@ -32,21 +32,21 @@ public class InstructionPrinter {
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),
                         RegisterNamingConverter.CSRtoAbi(instr.getImm()),
-                        RegisterNamingConverter.toAbi(instr.getR1()));
+                        RegisterNamingConverter.toAbi(instr.getRs1()));
             }
         }
         if (instr.getName().equals("LW")) {
             return String.format("%s, %s(%s)",
                     RegisterNamingConverter.toAbi(instr.getRd()),
                     instr.getImm(),
-                    RegisterNamingConverter.toAbi(instr.getR1())
+                    RegisterNamingConverter.toAbi(instr.getRs1())
             );
         }
         if (instr.getName().equals("SW")) {
             return String.format("%s, %s(%s)",
-                    RegisterNamingConverter.toAbi(instr.getR2()),
+                    RegisterNamingConverter.toAbi(instr.getRs2()),
                     instr.getImm(),
-                    RegisterNamingConverter.toAbi(instr.getR1())
+                    RegisterNamingConverter.toAbi(instr.getRs1())
             );
         }
 
@@ -54,20 +54,20 @@ public class InstructionPrinter {
             case R:
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),
-                        RegisterNamingConverter.toAbi(instr.getR1()),
-                        RegisterNamingConverter.toAbi(instr.getR2())
+                        RegisterNamingConverter.toAbi(instr.getRs1()),
+                        RegisterNamingConverter.toAbi(instr.getRs2())
                 );
             case I:
                 return String.format("%s, %s, %s",
                         RegisterNamingConverter.toAbi(instr.getRd()),
-                        RegisterNamingConverter.toAbi(instr.getR1()),
+                        RegisterNamingConverter.toAbi(instr.getRs1()),
                         instr.getImm()
                 );
             case S:
             case B:
                 return String.format("%s, %s, %s",
-                        RegisterNamingConverter.toAbi(instr.getR1()),
-                        RegisterNamingConverter.toAbi(instr.getR2()),
+                        RegisterNamingConverter.toAbi(instr.getRs1()),
+                        RegisterNamingConverter.toAbi(instr.getRs2()),
                         instr.hasOutLabel() ? instr.getOutLabel() : instr.getImm()
                 );
             case U:
@@ -87,13 +87,13 @@ public class InstructionPrinter {
                 return String.format("%s, %s(%s)",
                         RegisterNamingConverter.toAbi(instr.getRd()),
                         instr.getImm(),
-                        RegisterNamingConverter.toAbi(instr.getR1())
+                        RegisterNamingConverter.toAbi(instr.getRs1())
                 );
             case ("C.SW"):
                 return String.format("%s, %s(%s)",
-                        RegisterNamingConverter.toAbi(instr.getR2()),
+                        RegisterNamingConverter.toAbi(instr.getRs2()),
                         instr.getImm(),
-                        RegisterNamingConverter.toAbi(instr.getR1())
+                        RegisterNamingConverter.toAbi(instr.getRs1())
                 );
             case("C.LWSP"):
                 return String.format("%s, %s(sp)",
@@ -102,7 +102,7 @@ public class InstructionPrinter {
                 );
             case ("C.SWSP"):
                 return String.format("%s, %s(sp)",
-                        RegisterNamingConverter.toAbi(instr.getR2()),
+                        RegisterNamingConverter.toAbi(instr.getRs2()),
                         instr.getImm()
                 );
             case ("C.ADDI4SPN"):
@@ -120,17 +120,17 @@ public class InstructionPrinter {
         if (instr.getRd() != Instruction.UNDEFINED_VALUE) {
             res += RegisterNamingConverter.toAbi(instr.getRd());
         }
-        if (instr.getR1() != Instruction.UNDEFINED_VALUE) {
+        if (instr.getRs1() != Instruction.UNDEFINED_VALUE) {
             if (!res.isEmpty()) {
                 res += ", ";
             }
-            res += RegisterNamingConverter.toAbi(instr.getR1());
+            res += RegisterNamingConverter.toAbi(instr.getRs1());
         }
-        if (instr.getR2() != Instruction.UNDEFINED_VALUE) {
+        if (instr.getRs2() != Instruction.UNDEFINED_VALUE) {
             if (!res.isEmpty()) {
                 res += ", ";
             }
-            res += RegisterNamingConverter.toAbi(instr.getR2());
+            res += RegisterNamingConverter.toAbi(instr.getRs2());
         }
         if (instr.hasOutLabel()) {
             if (!res.isEmpty()) {

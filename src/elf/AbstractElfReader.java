@@ -35,18 +35,22 @@ public abstract class AbstractElfReader<T extends AbstractInfo> {
         return info;
     }
 
-    /** Reads bytes from range and asserts their value
+    /** Reads bytes from range and checks if their value lies in given range, if negative, throws exception
      * @param minValue inclusive
      * @param maxValue inclusive
      */
     private static long readWithAssert(byte[] data, int offset, int len, long minValue, long maxValue, String message) {
-        assert offset + len <= data.length : "Part of block is out of bounds of file";
+        if (offset + len > data.length) {
+            throw new IllegalArgumentException("Part of block is out of bounds of file");
+        }
         long value = 0;
         for (int i = 0; i < len; i++) {
             value = value | (Byte.toUnsignedLong(data[offset + i]) << (i * 8));
         }
-        assert minValue <= value && value <= maxValue : message;
-        return value;
+        if (minValue <= value && value <= maxValue) {
+            return value;
+        }
+        throw new IllegalStateException(message);
     }
 
     protected static class DataBlock {

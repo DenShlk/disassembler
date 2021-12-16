@@ -37,7 +37,9 @@ public class TextSectionReader {
     }
 
     private static long readBytes(byte[] data, int offset, int len) {
-        assert offset + len <= data.length : "Incorrect bounds";
+        if (offset + len > data.length) {
+            throw new IllegalArgumentException("Incorrect bounds");
+        }
         long value = 0;
         for (int i = 0; i < len; i++) {
             value = value | (Byte.toUnsignedLong(data[offset + i]) << (i * 8));

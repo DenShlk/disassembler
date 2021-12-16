@@ -5,7 +5,7 @@ import java.util.*;
 public class InstructionDecoder {
     // opcode -> instruction
     private final Map<Integer, List<ProtoInstruction>> opcode2Instruction = new HashMap<>();
-    // opcode -> compositeFunc -> instructions
+    // opcode -> func3 -> instructions
     private final Map<Integer, Map<Integer, List<CompressedProtoInstruction>>> opcode2CompProtoInstruction = new HashMap<>();
     // only for opcodes relevant to instructions of only one type
     private final Map<Integer, InstructionType> opcode2Type = new HashMap<>();
@@ -76,14 +76,14 @@ public class InstructionDecoder {
             case R:
                 return new Instruction(proto,
                         extractRegister(Register.Rd, bits),
-                        extractRegister(Register.R1, bits),
-                        extractRegister(Register.R2, bits),
+                        extractRegister(Register.Rs1, bits),
+                        extractRegister(Register.Rs2, bits),
                         Instruction.UNDEFINED_VALUE
                 );
             case I:
                 return new Instruction(proto,
                         extractRegister(Register.Rd, bits),
-                        extractRegister(Register.R1, bits),
+                        extractRegister(Register.Rs1, bits),
                         Instruction.UNDEFINED_VALUE,
                         extractImmediate(proto.getType(), bits)
                 );
@@ -91,8 +91,8 @@ public class InstructionDecoder {
             case B:
                 return new Instruction(proto,
                         Instruction.UNDEFINED_VALUE,
-                        extractRegister(Register.R1, bits),
-                        extractRegister(Register.R2, bits),
+                        extractRegister(Register.Rs1, bits),
+                        extractRegister(Register.Rs2, bits),
                         extractImmediate(proto.getType(), bits)
                 );
             case U:
@@ -116,8 +116,6 @@ public class InstructionDecoder {
                 !opcode2CompProtoInstruction.get(opcode).containsKey(func3)) {
             return Instruction.unknownInstruction();
         }
-        // assert opcode2CompProtoInstruction.containsKey(opcode) : "Unknown opcode: " + Integer.toBinaryString(opcode);
-        // assert opcode2CompProtoInstruction.get(opcode).containsKey(func3) : "Unknown func3: " + Integer.toBinaryString(func3);
 
         CompressedProtoInstruction matchedProto = null;
         for (CompressedProtoInstruction proto : opcode2CompProtoInstruction.get(opcode).get(func3)) {
@@ -130,7 +128,6 @@ public class InstructionDecoder {
         if (matchedProto == null) {
             return Instruction.unknownInstruction();
         }
-        // assert matchedProto != null : "No proto matches for instruction: " + Long.toBinaryString(bits);
 
         return new Instruction(matchedProto,
                 extractRegFromCompressed(bits, matchedProto.getRdEncoding()),
@@ -202,9 +199,9 @@ public class InstructionDecoder {
         switch (reg) {
             case Rd:
                 return (bits >> 7) & 0x1f;
-            case R1:
+            case Rs1:
                 return (bits >> 15) & 0x1f;
-            case R2:
+            case Rs2:
                 return (bits >> 20) & 0x1f;
             default:
                 throw new UnsupportedOperationException("Unknown register");
@@ -228,11 +225,10 @@ public class InstructionDecoder {
         if (!opcode2Instruction.containsKey(opcode)) {
             return null;
         }
-        // assert opcode2Instruction.containsKey(opcode) :
-        //         String.format("Opcode %s not recognised", Integer.toBinaryString(opcode));
+
         for (ProtoInstruction proto : opcode2Instruction.get(opcode)) {
             if (proto.getFunc3() == func3 && proto.getFunc7() == extractFunc7(bits, proto.getType())) {
-                assert result == null;
+                assert result == null : "Implicit proto instruction match: " + Long.toBinaryString(bits);;
                 result = proto;
             }
         }
@@ -265,7 +261,7 @@ public class InstructionDecoder {
 
     public enum Register {
         Rd,
-        R1,
-        R2,
+        Rs1,
+        Rs2,
     }
 }

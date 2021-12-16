@@ -28,46 +28,46 @@ class InstructionPrinterTest {
 
         for (int i = 0; i < 100; i++) {
             int rd = random.nextInt(32);
-            int r1 = random.nextInt(32);
-            int r2 = random.nextInt(32);
+            int rs1 = random.nextInt(32);
+            int rs2 = random.nextInt(32);
             int imm = random.nextInt(1 << 11);
             int address = random.nextInt(Integer.MAX_VALUE);
             String name = randomName(random);
 
             Instruction instrR = new Instruction(new ProtoInstruction(InstructionType.R,
                     name, random.nextInt(), random.nextInt(), random.nextInt()),
-                    rd, r1, r2, imm);
+                    rd, rs1, rs2, imm);
             instrR.setAddress(address);
 
             assertEquals(String.format("%08x             %s %s, %s, %s", address,
                     name,
                     RegisterNamingConverter.toAbi(rd),
-                    RegisterNamingConverter.toAbi(r1),
-                    RegisterNamingConverter.toAbi(r2)),
+                    RegisterNamingConverter.toAbi(rs1),
+                    RegisterNamingConverter.toAbi(rs2)),
                     InstructionPrinter.print(instrR));
 
             Instruction instrI = new Instruction(new ProtoInstruction(InstructionType.I,
                     name, random.nextInt(), random.nextInt(), random.nextInt()),
-                    rd, r1, r2, imm);
+                    rd, rs1, rs2, imm);
             instrI.setAddress(address);
 
             assertEquals(String.format("%08x             %s %s, %s, %d", address,
                     name,
                     RegisterNamingConverter.toAbi(rd),
-                    RegisterNamingConverter.toAbi(r1),
+                    RegisterNamingConverter.toAbi(rs1),
                     imm),
                     InstructionPrinter.print(instrI));
 
             Instruction instrS = new Instruction(new ProtoInstruction(
                     random.nextBoolean() ? InstructionType.S : InstructionType.B,
                     name, random.nextInt(), random.nextInt(), random.nextInt()),
-                    rd, r1, r2, imm);
+                    rd, rs1, rs2, imm);
             instrS.setAddress(address);
 
             assertEquals(String.format("%08x             %s %s, %s, %d", address,
                     name,
-                    RegisterNamingConverter.toAbi(r1),
-                    RegisterNamingConverter.toAbi(r2),
+                    RegisterNamingConverter.toAbi(rs1),
+                    RegisterNamingConverter.toAbi(rs2),
                     imm),
                     InstructionPrinter.print(instrS));
 
@@ -75,7 +75,7 @@ class InstructionPrinterTest {
             Instruction instrU = new Instruction(new ProtoInstruction(
                     random.nextBoolean() ? InstructionType.U : InstructionType.J,
                     name, random.nextInt(), random.nextInt(), random.nextInt()),
-                    rd, r1, r2, imm);
+                    rd, rs1, rs2, imm);
             instrU.setAddress(address);
 
             assertEquals(String.format("%08x             %s %s, %d", address,
@@ -89,19 +89,19 @@ class InstructionPrinterTest {
                     "CSRRW",
                     RegisterNamingConverter.toAbi(rd),
                     "fcsr",
-                    RegisterNamingConverter.toAbi(r1)),
+                    RegisterNamingConverter.toAbi(rs1)),
                     InstructionPrinter.print(new Instruction(new ProtoInstruction(InstructionType.I,
                             "CSRRW", 0b1110011, 0b001),
-                            rd, r1, r2, 0x003)));
+                            rd, rs1, rs2, 0x003)));
 
             assertEquals(String.format("%08x             %s %s, %s, %s", 0,
                     "CSRRCI",
                     RegisterNamingConverter.toAbi(rd),
                     "cycle",
-                    r1), // = zimm
+                    rs1), // = zimm
                     InstructionPrinter.print(new Instruction(new ProtoInstruction(InstructionType.I,
                             "CSRRCI", 0b1110011, 0b111),
-                            rd, r1, r2, 0xC00)));
+                            rd, rs1, rs2, 0xC00)));
         }
     }
 }
