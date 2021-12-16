@@ -67,8 +67,17 @@ public abstract class AbstractElfReader<T extends AbstractInfo> {
         }
 
         // any value
+        public DataBlock(String name, int len) {
+            this(name, len, "");
+        }
+
+        // any value
         public DataBlock(String name, int len, String errorMessage) {
             this(name, len, 0x0, (1L << (len * 8 + 1)) - 1, errorMessage);
+        }
+
+        public DataBlock(String name, int len, long minValue, long maxValue) {
+            this(name, len, minValue, maxValue, "");
         }
 
         public DataBlock(String name, int len, long minValue, long maxValue, String errorMessage) {

@@ -64,6 +64,9 @@ public class InstructionDecoder {
     }
 
     public Instruction decode(long bits, InstructionSize size) {
+        if (bits == 0 || ((int) bits) == -1 || bits == (-1 >> 16)) {
+            return Instruction.illegalInstruction();
+        }
         if (size == InstructionSize.COMPRESSED_16) {
             return decodeCompressed(bits);
         }

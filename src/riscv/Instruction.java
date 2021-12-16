@@ -35,6 +35,15 @@ public class Instruction {
                 UNDEFINED_VALUE);
     }
 
+    public static Instruction illegalInstruction() {
+        return new Instruction(
+                new ProtoInstruction(null, "illegal_instruction", UNKNOWN_INSTRUCTION_OPCODE),
+                UNDEFINED_VALUE,
+                UNDEFINED_VALUE,
+                UNDEFINED_VALUE,
+                UNDEFINED_VALUE);
+    }
+
     @Override
     public String toString() {
         return String.format("%s %d, %d, %d, %d", proto.getName(), rd, rs1, rs2, imm);

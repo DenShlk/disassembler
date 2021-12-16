@@ -20,10 +20,6 @@ public class RegisterNamingConverter {
             new Range(31, 28), new NamingRange("t", 6, 3)
     );
 
-    private static final Map<Range, NamingRange> COMPRESSED_RANGES = Map.of(
-            new Range(7, 0), new NamingRange("x", 15, 8)
-    );
-
     private static final Map<Integer, String> CSR_REGISTER_2_NAME = Map.of(
             0x001, "fflags",
             0x002, "frm",
@@ -37,27 +33,13 @@ public class RegisterNamingConverter {
     );
 
     private static final Map<Long, String> register2name = new HashMap<>();
-    private static final Map<Long, String> compressedRegister2name = new HashMap<>();
 
     static {
-        unpackRanges(RANGES, register2name);
-        unpackRanges(COMPRESSED_RANGES, compressedRegister2name);
-    }
-
-    private static void unpackRanges(Map<Range, NamingRange> ranges, Map<Long, String> fullMap) {
-        ranges.forEach((range, naming) -> {
+        RANGES.forEach((range, naming) -> {
             for (int i = 0; i < range.getLength(); i++) {
-                fullMap.put((long) (range.lower + i), naming.toString(i));
+                register2name.put((long) (range.lower + i), naming.toString(i));
             }
         });
-    }
-
-    @Deprecated
-    public static String compressedToAbi(long reg) {
-        if (!compressedRegister2name.containsKey(reg)) {
-            throw new IllegalArgumentException("Compressed register " + reg + " is not recognised");
-        }
-        return compressedRegister2name.get(reg);
     }
 
     public static String toAbi(long reg) {

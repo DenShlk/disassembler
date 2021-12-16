@@ -49,7 +49,7 @@
 000100f8             auipc t1, 0
 000100fc             jalr zero, zero, 0
 00010100  LOC_00004: c.jr ra
-00010102             c.addi4spn s0, sp, 0
+00010102             illegal_instruction 
 00010104 _Z8multiplyii: addi sp, sp, -48
 00010108             sw s0, 44(sp)
 0001010c             addi s0, sp, 48
