@@ -6,6 +6,7 @@ import riscv.InstructionPrinter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -129,7 +130,7 @@ public class Main {
     private static byte[] readBytes(String path) throws IOException {
         try {
             return Files.readAllBytes(Path.of(path));
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             throw new FileNotFoundException("File not found." + System.lineSeparator() + e.getMessage());
         } catch (IOException e) {
             throw new IOException("Failed to read file:" + System.lineSeparator() + e.getMessage());
