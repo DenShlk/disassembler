@@ -1,7 +1,7 @@
-# elf64 risc-v disassembler
+# elf32 risc-v disassembler
 
 This repo is solution for one of homeworks in ITMO university Computer Tech course.
-The goal of this code is to convert elf64 binary file compiled for risc-v architecture to human readable (as it can be) assembler code.
+The goal of this code is to convert elf32 binary file compiled for risc-v architecture to human readable (as it can be) assembler code.
 
 The main reference for this project was [risc-v documentation](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf).
 
