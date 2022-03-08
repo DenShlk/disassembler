@@ -7,14 +7,14 @@ The main reference for this project was [risc-v documentation](https://riscv.org
 
 Some code generation was used to convert table from documetation mentioned above to java file with list of objects representing table entities. You can find it in ./scripts
 
-# How it works
+## How it works
 General pipeline:
 
 read input file -> decode header with elf.\*\*\*Reader classes -> 
 find and decode text section (instructions) -> decode each instruction by determining its type, operation code and etc. ->
 label connections between instructions (jumps) -> format instructions -> write to output file
 
-# Example output (part of out.txt, result of run on one of samples)
+## Example output (part of out.txt, result of run on one of samples)
 ```
 .text
 00010074 register_fini: addi a5, zero, 0
@@ -44,5 +44,5 @@ label connections between instructions (jumps) -> format instructions -> write t
 000100b8             c.j exit
 ```
 
-# PS
+### PS
 This repository is only temporary public, because it contains solution to homework which can be given to students in the next academic year.
